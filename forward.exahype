@@ -45,7 +45,7 @@ exahype-project earthadj
     maximum-mesh-size  = 0.1
     time-stepping      = global
     type const         = linear
-    terms const        = flux,ncp
+    terms const        = ncp
     optimisation const = generic
     language const     = C
 

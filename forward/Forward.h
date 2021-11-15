@@ -126,17 +126,7 @@ class earthadj::Forward : public earthadj::AbstractForward {
     
     //PDE
     
-    /**
-     * Compute the flux tensor.
-     *
-     * @param[in]    Q vector of state variables (plus parameters); 
-     *                 range: [0,nVar+nPar-1], already allocated.
-     *                 
-     * @param[inout] F flux at that point;
-     *                 range[outer->inner]: [0,nDim-1]x[0,nVar-1], 
-     *                 already allocated.
-     */
-    void flux(const double* const Q,double** const F) final override;
+/* flux() function not included, as requested in the specification file */
 
 /* viscousFlux() function not included, as requested in the specification file */
 

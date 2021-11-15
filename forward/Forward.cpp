@@ -111,45 +111,20 @@ void earthadj::Forward::eigenvalues(const double* const Q,const int direction,do
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
   
   // @todo Please implement/augment if required
-  lambda[sigma11] = 1.0;
-  lambda[sigma22] = 1.0;
-  lambda[sigma12] = 1.0;
-  lambda[uu] = 1.0;
-  lambda[vv] = 1.0;
-  lambda[lamb] = 1.0;
-  lambda[mu] = 1.0;
-  lambda[rho] = 1.0;
+  lambda[0] = 1.0;
+  lambda[1] = 1.0;
+  lambda[2] = 1.0;
+  lambda[3] = 1.0;
+  lambda[4] = 0;
+  lambda[5] = 1.0;
+  lambda[6] = 1.0;
+  lambda[7] = 1.0;
 }
 
 
 
 
 
-void earthadj::Forward::flux(const double* const Q,double** const F) {
-  // Tip: You find documentation for this method in header file "earthadj::Forward.h".
-  // Tip: See header file "earthadj::AbstractForward.h" for toolkit generated compile-time 
-  //      constants such as Order, NumberOfVariables, and NumberOfParameters.
-  
-  // @todo Please implement/augment if required
-  F[0][sigma11] = -(Q[lamb]+2*Q[mu])*Q[uu];
-  F[0][sigma22] = -Q[lamb]*Q[uu];
-  F[0][sigma12] = -Q[mu]*Q[vv];
-  F[0][uu] = -Q[sigma11]/Q[rho];
-  F[0][vv] = -Q[sigma12]/Q[rho];
-  F[0][lamb] = 0.0;
-  F[0][mu] = 0.0;
-  F[0][rho] = 0.0;
-
-  F[1][0] = -Q[lamb]*Q[vv];
-  F[1][sigma22] = -(Q[lamb]+2*Q[mu])*Q[vv];
-  F[1][sigma12] = -Q[mu]*Q[vv];
-  F[1][uu] = -Q[sigma12]/Q[rho];
-  F[1][vv] = -Q[sigma22]/Q[rho];
-  F[1][lamb] = 0.0;
-  F[1][mu] = 0.0;
-  F[1][rho] = 0.0;
-  
-}
 
 
 
@@ -160,19 +135,20 @@ void  earthadj::Forward::nonConservativeProduct(const double* const Q,const doub
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
   
   // @todo Please implement/augment if required
-  BgradQ[0][sigma11] = 0.0;
-  BgradQ[0][sigma22] = 0.0;
-  BgradQ[0][sigma12] = -gradQ[0][lamb]*Q[vv];
-  BgradQ[0][uu] = 0.0;
-  BgradQ[0][vv] = 0.0;
+  BgradQ[0][sigma11] = -(Q[lamb]+2*Q[mu])*gradQ[0][uu];;
+  BgradQ[0][sigma22] = -Q[lamb]*gradQ[0][uu];
+  BgradQ[0][sigma12] = -Q[mu]*gradQ[0][vv];
+  BgradQ[0][uu] = -gradQ[0][sigma11]/Q[rho];
+  BgradQ[0][vv] = -gradQ[0][sigma12]/Q[rho];
   BgradQ[0][lamb] = 0.0;
   BgradQ[0][mu] = 0.0;
   BgradQ[0][rho] = 0.0;
-  BgradQ[1][sigma11] = 0.0;
-  BgradQ[1][sigma22] = 0.0;
-  BgradQ[1][sigma12] = -gradQ[1][lamb]*Q[vv];
-  BgradQ[1][uu] = 0.0;
-  BgradQ[1][vv] = 0.0;
+
+  BgradQ[1][sigma11] = -Q[lamb]*gradQ[1][vv];
+  BgradQ[1][sigma22] = -(Q[lamb]+2*Q[mu])*gradQ[1][vv];
+  BgradQ[1][sigma12] = -Q[mu]*gradQ[1][vv];
+  BgradQ[1][uu] = -gradQ[1][sigma12]/Q[rho];
+  BgradQ[1][vv] = -gradQ[1][sigma22]/Q[rho];
   BgradQ[1][lamb] = 0.0;
   BgradQ[1][mu] = 0.0;
   BgradQ[1][rho] = 0.0;
