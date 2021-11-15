@@ -4,13 +4,13 @@ exahype-project earthadj
   exahype-path const         = ./ExaHyPE
   output-directory const     = ./adjoint/forward/
   architecture const         = noarch
-  log-file                   = mylogfile.log
+  log-file                   = ./logs/mylogfile.log
   plotter-subdirectory const = Writers
 
  /*Configure the domain*/
   computational-domain
     dimension const          = 2
-    width                    = 2.0,2.0
+    width                    = 10.0,10.0
     offset                   = 0.0,0.0
     end-time                 = 9.0
   end computational-domain
@@ -40,9 +40,10 @@ exahype-project earthadj
 
   /*Defines the hyperbolic PDE*/
   solver ADER-DG Forward
-    variables const    = 8
+    variables const    = sigma:3,v:2
+    parameters const   = 3
     order const        = 3
-    maximum-mesh-size  = 0.1
+    maximum-mesh-size  = 0.5
     time-stepping      = global
     type const         = linear
     terms const        = ncp
@@ -51,10 +52,10 @@ exahype-project earthadj
 
   /*##Add plotters here if needed */
   plot vtk::Cartesian::vertices::ascii VtkWriter
-      variables const = Q:1,Error:1
+      variables const = sigma:3,velocity:2
       time            = 0.0
       repeat          = 0.1
-      output          = adjoint/forward/output/test1
+      output          = output/testBoundary
       end plot 
   end solver
 

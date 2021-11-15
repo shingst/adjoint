@@ -43,14 +43,17 @@ void earthadj::Forward::adjustPointSolution(const double* const x,const double t
   
   // @todo Please implement/augment if required
   if (tarch::la::equals(t,0.0)) {
+    auto xx=x[0];
+    auto yy=x[1];
+
     Q[sigma11] = 0.0;
     Q[sigma22] = 0.0;
     Q[sigma12] = 0.0;
-    Q[uu] = 0.0;
-    Q[vv] = 0.0;
-    Q[lamb] = 0.0;
-    Q[mu] = 0.0;
-    Q[rho] = 0.0;
+    Q[uu] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));
+    Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
+    Q[lamb] = 2.0;
+    Q[mu] = 0.5;
+    Q[rho] = 1.0;
   }
 }
 
@@ -60,23 +63,32 @@ void earthadj::Forward::boundaryValues(const double* const x,const double t,cons
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
   // @todo Please implement/augment if required
-  stateOut[0] = 0.0;
-  stateOut[sigma22] = 0.0;
-  stateOut[sigma12] = 0.0;
-  stateOut[uu] = 0.0;
-  stateOut[vv] = 0.0;
-  stateOut[lamb] = 0.0;
-  stateOut[mu] = 0.0;
-  stateOut[rho] = 0.0;
+  if(direction==0) {
+    stateOut[sigma11] = -stateIn[sigma11];
+    stateOut[sigma22] = 0.0;
+  }
+  else {
+    stateOut[sigma11]=0.0;
+    stateOut[sigma22] = -stateIn[sigma22];
+  }
+  stateOut[sigma12] = -stateIn[sigma12];
+  stateOut[uu] = stateIn[uu];
+  stateOut[vv] = stateIn[vv];
+  stateOut[lamb] = stateIn[lamb];
+  stateOut[mu] = stateIn[mu];
+  stateOut[rho] = stateIn[rho];
 
-  fluxOut[0] = 0.0;
-  fluxOut[sigma22] = 0.0;
-  fluxOut[sigma12] = 0.0;
-  fluxOut[uu] = 0.0;
-  fluxOut[vv] = 0.0;
-  fluxOut[lamb] = 0.0;
-  fluxOut[mu] = 0.0;
-  fluxOut[rho] = 0.0;
+//  for(int i=0;i<5;i++)
+//    stateOut[i]=0.0;
+
+//  fluxOut[0] = 0.0;
+//  fluxOut[sigma22] = 0.0;
+//  fluxOut[sigma12] = 0.0;
+//  fluxOut[uu] = 0.0;
+//  fluxOut[vv] = 0.0;
+//  fluxOut[lamb] = 0.0;
+//  fluxOut[mu] = 0.0;
+//  fluxOut[rho] = 0.0;
 }
 
 exahype::solvers::Solver::RefinementControl earthadj::Forward::refinementCriterion(const double* const luh,const tarch::la::Vector<DIMENSIONS,double>& cellCentre,const tarch::la::Vector<DIMENSIONS,double>& cellSize,double t,const int level) {
@@ -111,14 +123,15 @@ void earthadj::Forward::eigenvalues(const double* const Q,const int direction,do
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
   
   // @todo Please implement/augment if required
-  lambda[0] = 1.0;
-  lambda[1] = 1.0;
-  lambda[2] = 1.0;
-  lambda[3] = 1.0;
+  auto cp=std::sqrt((Q[lamb]+2*Q[mu])/Q[rho]);
+  auto cs=std::sqrt(Q[mu]/Q[rho]);
+
+
+  lambda[0] = -cp;
+  lambda[1] = cp;
+  lambda[2] = -cs;
+  lambda[3] = cs;
   lambda[4] = 0;
-  lambda[5] = 1.0;
-  lambda[6] = 1.0;
-  lambda[7] = 1.0;
 }
 
 
@@ -133,25 +146,26 @@ void  earthadj::Forward::nonConservativeProduct(const double* const Q,const doub
   // Tip: You find documentation for this method in header file "earthadj::Forward.h".
   // Tip: See header file "earthadj::AbstractForward.h" for toolkit generated compile-time 
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
-  
+
+//  std::cout <<"ncp"<<std::endl;
   // @todo Please implement/augment if required
   BgradQ[0][sigma11] = -(Q[lamb]+2*Q[mu])*gradQ[0][uu];;
   BgradQ[0][sigma22] = -Q[lamb]*gradQ[0][uu];
   BgradQ[0][sigma12] = -Q[mu]*gradQ[0][vv];
   BgradQ[0][uu] = -gradQ[0][sigma11]/Q[rho];
   BgradQ[0][vv] = -gradQ[0][sigma12]/Q[rho];
-  BgradQ[0][lamb] = 0.0;
-  BgradQ[0][mu] = 0.0;
-  BgradQ[0][rho] = 0.0;
+//  BgradQ[0][lamb] = 0.0;
+//  BgradQ[0][mu] = 0.0;
+//  BgradQ[0][rho] = 0.0;
 
   BgradQ[1][sigma11] = -Q[lamb]*gradQ[1][vv];
   BgradQ[1][sigma22] = -(Q[lamb]+2*Q[mu])*gradQ[1][vv];
-  BgradQ[1][sigma12] = -Q[mu]*gradQ[1][vv];
+  BgradQ[1][sigma12] = -Q[mu]*gradQ[1][uu];
   BgradQ[1][uu] = -gradQ[1][sigma12]/Q[rho];
   BgradQ[1][vv] = -gradQ[1][sigma22]/Q[rho];
-  BgradQ[1][lamb] = 0.0;
-  BgradQ[1][mu] = 0.0;
-  BgradQ[1][rho] = 0.0;
+//  BgradQ[1][lamb] = 0.0;
+//  BgradQ[1][mu] = 0.0;
+//  BgradQ[1][rho] = 0.0;
 }
 
 
