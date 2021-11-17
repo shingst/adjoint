@@ -51,8 +51,14 @@ void earthadj::Forward::adjustPointSolution(const double* const x,const double t
     Q[sigma12] = 0.0;
     Q[uu] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));
     Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
-    Q[lamb] = 2.0;
-    Q[mu] = 0.5;
+    if(xx<7.5) {
+      Q[lamb] = 2.0;
+      Q[mu] = 0.5;
+    }
+    else{
+      Q[lamb] = 2.0;
+      Q[mu] = 2.0;
+    }
     Q[rho] = 1.0;
   }
 }
@@ -63,23 +69,23 @@ void earthadj::Forward::boundaryValues(const double* const x,const double t,cons
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
   // @todo Please implement/augment if required
-  if(direction==0) {
-    stateOut[sigma11] = -stateIn[sigma11];
-    stateOut[sigma22] = 0.0;
-  }
-  else {
-    stateOut[sigma11]=0.0;
-    stateOut[sigma22] = -stateIn[sigma22];
-  }
-  stateOut[sigma12] = -stateIn[sigma12];
-  stateOut[uu] = stateIn[uu];
-  stateOut[vv] = stateIn[vv];
+//  if(direction==0) {
+//    stateOut[sigma11] = -stateIn[sigma11];
+//    stateOut[sigma22] = 0.0;
+//  }
+//  else {
+//    stateOut[sigma11]=0.0;
+//    stateOut[sigma22] = -stateIn[sigma22];
+//  }
+//  stateOut[sigma12] = -stateIn[sigma12];
+//  stateOut[uu] = stateIn[uu];
+//  stateOut[vv] = stateIn[vv];
   stateOut[lamb] = stateIn[lamb];
   stateOut[mu] = stateIn[mu];
   stateOut[rho] = stateIn[rho];
 
-//  for(int i=0;i<5;i++)
-//    stateOut[i]=0.0;
+  for(int i=0;i<5;i++)
+    stateOut[i]=0.0;
 
 //  fluxOut[0] = 0.0;
 //  fluxOut[sigma22] = 0.0;
