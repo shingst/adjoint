@@ -1,0 +1,63 @@
+exahype-project earthadj
+  /*Set paths*/
+  peano-kernel-path const    = ./Peano
+  exahype-path const         = ./ExaHyPE
+  output-directory const     = ./adjoint/adjoint/
+  architecture const         = noarch
+  log-file                   = ./logs/mylogfile.log
+  plotter-subdirectory const = Writers
+
+ /*Configure the domain*/
+  computational-domain
+    dimension const          = 2
+    width                    = 10.0,10.0
+    offset                   = 0.0,0.0
+    end-time                 = 9.0
+  end computational-domain
+
+  /*Configure shared memory settings*/
+  /*shared-memory
+    identifier               = dummy
+    configure                = {background-tasks:8}
+    cores                    = 8
+    properties-file          = sharedmemory.properties
+  end shared-memory*/
+
+  /*Optimiziation: DO N0T TOUCH*/
+  global-optimisation
+      fuse-algorithmic-steps          = all
+      fuse-algorithmic-steps-rerun-factor   = 0.99
+      fuse-algorithmic-steps-diffusion-factor   = 0.99
+      spawn-predictor-as-background-thread = off
+      spawn-amr-background-threads         = off
+      /* 0.0 und 0.8 sind schon mal zwei Faktoren */
+      disable-vertex-exchange-in-time-steps = on
+      time-step-batch-factor           = 0.0
+      disable-metadata-exchange-in-batched-time-steps = off
+      double-compression = 0.0
+      spawn-double-compression-as-background-thread = off
+   end global-optimisation
+
+  /*Defines the hyperbolic PDE*/
+  solver ADER-DG Adjoint
+    variables const    = sigma:3,v:2
+    parameters const   = 3
+    order const        = 3
+    maximum-mesh-size  = 0.5
+    time-stepping      = global
+    type const         = linear
+    terms const        = flux
+    optimisation const = generic
+    language const     = C
+
+  /*##Add plotters here if needed */
+  plot vtk::Cartesian::vertices::ascii VtkWriter
+      variables const = sigma:3,velocity:2
+      time            = 0.0
+      repeat          = 0.1
+      output          = output/twomaterials
+      end plot 
+  end solver
+
+end exahype-project
+
