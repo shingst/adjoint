@@ -99,7 +99,8 @@ void earthadj::Adjoint::eigenvalues(const double* const Q,const int direction,do
   // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
   // Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time 
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
-  
+  auto cp=std::sqrt((Q[lamb]+2*Q[mu])/Q[rho]);
+  auto cs=std::sqrt(Q[mu]/Q[rho]);
   // @todo Please implement/augment if required
   lambda[0] = -cp;
   lambda[1] = cp;
@@ -121,14 +122,14 @@ void earthadj::Adjoint::flux(const double* const Q,double** const F) {
   F[0][sigma11] = -Q[uu]/Q[rho];
   F[0][sigma22] = 0.0;
   F[0][sigma12] = -Q[vv]/Q[rho];
-  F[0][uu] = -(Q[lamb]+2*Q[mu])*q[sigma11]-Q[lamb*Q[sigma22]];
+  F[0][uu] = -(Q[lamb]+2*Q[mu])*Q[sigma11]-Q[lamb]*Q[sigma22];
   F[0][vv] = -Q[mu]*Q[sigma12];
   
   F[1][sigma11] = 0.0;
   F[1][sigma22] = -Q[vv]/Q[rho];
   F[1][sigma12] = -Q[uu]/Q[rho];
   F[1][uu] = -Q[mu]*Q[sigma12];
-  F[1][vv] = -(Q[lamb]+2*Q[mu])*q[sigma22]-Q[lamb*Q[sigma11]];
+  F[1][vv] = -(Q[lamb]+2*Q[mu])*Q[sigma22]-Q[lamb]*Q[sigma11];
   
 }
 
