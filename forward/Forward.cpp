@@ -68,33 +68,40 @@ void earthadj::Forward::boundaryValues(const double* const x,const double t,cons
   // Tip: See header file "earthadj::AbstractForward.h" for toolkit generated compile-time 
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
-  // @todo Please implement/augment if required
-//  if(direction==0) {
-//    stateOut[sigma11] = -stateIn[sigma11];
-//    stateOut[sigma22] = 0.0;
-//  }
-//  else {
-//    stateOut[sigma11]=0.0;
-//    stateOut[sigma22] = -stateIn[sigma22];
-//  }
-//  stateOut[sigma12] = -stateIn[sigma12];
-//  stateOut[uu] = stateIn[uu];
-//  stateOut[vv] = stateIn[vv];
+  // Specified traction
+  if(direction==0) {
+    stateOut[sigma11] = -stateIn[sigma11];
+    stateOut[sigma22] = stateIn[sigma22];
+  }
+  else {
+    stateOut[sigma11]=stateIn[sigma11];
+    stateOut[sigma22] = -stateIn[sigma22];
+  }
+  stateOut[sigma12] = -stateIn[sigma12];
+  stateOut[uu] = stateIn[uu];
+  stateOut[vv] = stateIn[vv];
+
+  //Do not remove!
   stateOut[lamb] = stateIn[lamb];
   stateOut[mu] = stateIn[mu];
   stateOut[rho] = stateIn[rho];
 
-  for(int i=0;i<5;i++)
-    stateOut[i]=0.0;
+  // Specified Motion
+  stateOut[sigma11]=stateIn[sigma11];
+  stateOut[sigma22] = stateIn[sigma22];
 
-//  fluxOut[0] = 0.0;
-//  fluxOut[sigma22] = 0.0;
-//  fluxOut[sigma12] = 0.0;
-//  fluxOut[uu] = 0.0;
-//  fluxOut[vv] = 0.0;
-//  fluxOut[lamb] = 0.0;
-//  fluxOut[mu] = 0.0;
-//  fluxOut[rho] = 0.0;
+  stateOut[sigma12] = stateIn[sigma12];
+  stateOut[uu] = -stateIn[uu];
+  stateOut[vv] = -stateIn[vv];
+
+
+
+// Zeroing BOundary
+//  for(int i=0;i<5;i++)
+//    stateOut[i]=0.0;
+
+
+
 }
 
 exahype::solvers::Solver::RefinementControl earthadj::Forward::refinementCriterion(const double* const luh,const tarch::la::Vector<DIMENSIONS,double>& cellCentre,const tarch::la::Vector<DIMENSIONS,double>& cellSize,double t,const int level) {
