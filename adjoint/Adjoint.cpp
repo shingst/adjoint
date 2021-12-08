@@ -119,17 +119,17 @@ void earthadj::Adjoint::flux(const double* const Q,double** const F) {
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
   
   // @todo Please implement/augment if required
-  F[0][sigma11] = -Q[uu]/Q[rho];
+  F[0][sigma11] = Q[uu]/Q[rho];
   F[0][sigma22] = 0.0;
-  F[0][sigma12] = -Q[vv]/Q[rho];
-  F[0][uu] = -(Q[lamb]+2*Q[mu])*Q[sigma11]-Q[lamb]*Q[sigma22];
-  F[0][vv] = -Q[mu]*Q[sigma12];
+  F[0][sigma12] = Q[vv]/Q[rho];
+  F[0][uu] = (Q[lamb]+2*Q[mu])*Q[sigma11]+Q[lamb]*Q[sigma22];
+  F[0][vv] = Q[mu]*Q[sigma12];
   
   F[1][sigma11] = 0.0;
-  F[1][sigma22] = -Q[vv]/Q[rho];
-  F[1][sigma12] = -Q[uu]/Q[rho];
-  F[1][uu] = -Q[mu]*Q[sigma12];
-  F[1][vv] = -(Q[lamb]+2*Q[mu])*Q[sigma22]-Q[lamb]*Q[sigma11];
+  F[1][sigma22] = Q[vv]/Q[rho];
+  F[1][sigma12] = Q[uu]/Q[rho];
+  F[1][uu] = Q[mu]*Q[sigma12];
+  F[1][vv] = (Q[lamb]+2*Q[mu])*Q[sigma22]+Q[lamb]*Q[sigma11];
   
 }
 
