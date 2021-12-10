@@ -12,17 +12,11 @@
 
 #include "kernels/KernelUtils.h"
 #include "peano/utils/Loop.h"
+#include "../elasticutil.h"
 
 tarch::logging::Log earthadj::Forward::_log( "earthadj::Forward" );
 
-constexpr uint sigma11=0;
-constexpr uint sigma22=1;
-constexpr uint sigma12=2;
-constexpr uint uu=3;
-constexpr uint vv=4;
-constexpr uint lamb =5;//lambda is already used for eigenvalues
-constexpr uint mu=6;
-constexpr uint rho=7;
+
 
 
 
@@ -69,30 +63,10 @@ void earthadj::Forward::boundaryValues(const double* const x,const double t,cons
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
   // Specified traction
-  if(direction==0) {
-    stateOut[sigma11] = -stateIn[sigma11];
-    stateOut[sigma22] = stateIn[sigma22];
-  }
-  else {
-    stateOut[sigma11]=stateIn[sigma11];
-    stateOut[sigma22] = -stateIn[sigma22];
-  }
-  stateOut[sigma12] = -stateIn[sigma12];
-  stateOut[uu] = stateIn[uu];
-  stateOut[vv] = stateIn[vv];
-
-  //Do not remove!
-  stateOut[lamb] = stateIn[lamb];
-  stateOut[mu] = stateIn[mu];
-  stateOut[rho] = stateIn[rho];
+  specifiedTraction(direction, stateIn, stateOut);
 
   // Specified Motion
-  stateOut[sigma11]=stateIn[sigma11];
-  stateOut[sigma22] = stateIn[sigma22];
 
-  stateOut[sigma12] = stateIn[sigma12];
-  stateOut[uu] = -stateIn[uu];
-  stateOut[vv] = -stateIn[vv];
 
 
 

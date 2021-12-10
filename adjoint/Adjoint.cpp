@@ -12,17 +12,11 @@
 
 #include "kernels/KernelUtils.h"
 #include "peano/utils/Loop.h"
+#include "../elasticutil.h"
+
 
 tarch::logging::Log earthadj::Adjoint::_log( "earthadj::Adjoint" );
 
-constexpr uint sigma11=0;
-constexpr uint sigma22=1;
-constexpr uint sigma12=2;
-constexpr uint uu=3;
-constexpr uint vv=4;
-constexpr uint lamb =5;//lambda is already used for eigenvalues
-constexpr uint mu=6;
-constexpr uint rho=7;
 
 void earthadj::Adjoint::init(const std::vector<std::string>& cmdlineargs,const exahype::parser::ParserView& constants) {
   // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
@@ -56,17 +50,7 @@ void earthadj::Adjoint::boundaryValues(const double* const x,const double t,cons
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
   // @todo Please implement/augment if required
-  stateOut[0] = 0.0;
-  stateOut[1] = 0.0;
-  stateOut[2] = 0.0;
-  stateOut[3] = 0.0;
-  stateOut[4] = 0.0;
-
-  fluxOut[0] = 0.0;
-  fluxOut[1] = 0.0;
-  fluxOut[2] = 0.0;
-  fluxOut[3] = 0.0;
-  fluxOut[4] = 0.0;
+  zeroBoundary(direction,stateIn,stateOut);
 }
 
 exahype::solvers::Solver::RefinementControl earthadj::Adjoint::refinementCriterion(const double* const luh,const tarch::la::Vector<DIMENSIONS,double>& cellCentre,const tarch::la::Vector<DIMENSIONS,double>& cellSize,double t,const int level) {
