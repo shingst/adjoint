@@ -26,8 +26,8 @@ void earthadj::Forward::init(const std::vector<std::string>& cmdlineargs,const e
   // Tip: You find documentation for this method in header file "earthadj::Forward.h".
   
   // @todo Please implement/augment if required
+	initPointSourceLocations(cmdlineargs,constants);
 
-    
 }
 
 void earthadj::Forward::adjustPointSolution(const double* const x,const double t,const double dt,double* const Q) {
@@ -43,8 +43,10 @@ void earthadj::Forward::adjustPointSolution(const double* const x,const double t
     Q[sigma11] = 0.0;
     Q[sigma22] = 0.0;
     Q[sigma12] = 0.0;
-    Q[uu] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));
-    Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
+//    Q[uu] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));
+//    Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
+	Q[uu]=0.0;
+	Q[vv]=0.0;
     if(xx<7.5) {
       Q[lamb] = 2.0;
       Q[mu] = 0.5;
@@ -155,4 +157,24 @@ void  earthadj::Forward::nonConservativeProduct(const double* const Q,const doub
 //  BgradQ[1][rho] = 0.0;
 }
 
+void earthadj::Forward::initPointSourceLocations(const std::vector<std::string> &cmdlineargs,
+												 const exahype::parser::ParserView &constants) {
+	pointSourceLocation[0][0]=5.0;
+	pointSourceLocation[0][1]=5.0;
+}
+
+
+void earthadj::Forward::pointSource(const double *const Q, const double *const x, const double t, const double dt,
+									double *const forceVector, int n) {
+	double T=0.1;
+	double M_0=1000;
+	auto M_xy=(M_0*t/(T*T))*std::exp(-t/T);
+	if(t>1)
+		M_xy=0.0;
+	forceVector[sigma12]=M_xy;
+	forceVector[sigma11]=0.0;
+	forceVector[sigma22]=0.0;
+	forceVector[uu]=0.0;
+	forceVector[vv]=0.0;
+}
 

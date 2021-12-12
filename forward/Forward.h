@@ -159,7 +159,35 @@ class earthadj::Forward : public earthadj::AbstractForward {
      */
     void nonConservativeProduct(const double* const Q,const double* const * const gradQ,double** const BgradQ) final override;
 
-/* pointSource() function not included, as requested in the specification file */
+	/**
+     * Initialise the locations of point sources
+     * Point source n will be located at pointSourceLocation[n][:]
+     *
+     * @param[in] cmdlineargs the command line arguments.
+     * @param[in] constants   access to the constants specified for the solver.
+     */
+	void initPointSourceLocations(const std::vector<std::string>& cmdlineargs,const exahype::parser::ParserView& constants);
+
+
+	/**
+	 * Compute the contribution of a point source.
+	 *
+	 * This function should return the force vector of a point source n
+	 * located at pointSourceLocation[n][:] as defined in
+	 * initPointSourceLocations()
+	 *
+	 * @param[in]  Q           vector of state variables (plus material
+	 *                         parameters), range: [0,nVar+nPar-1], already allocated.
+	 * @param[in]  x           the position associated with Q
+	 * @param[in]  t           the time stamp associated with Q
+	 * @param[in]  dt          the current time step size
+	 * @param[out] forceVector the force vector of the point source (size: ?)
+	 *
+	 * @todo LR: Is x really needed?
+	 * @todo LR: Is dt really needed?
+	 * @todo LR: specify size of forceVector
+	 */
+	void pointSource(const double* const Q,const double* const x,const double t,const double dt, double* const forceVector,int n) override;
 
 /* multiplyMaterialParameterMatrix() not included, as requested in the specification file */
 };

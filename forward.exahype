@@ -46,7 +46,7 @@ exahype-project earthadj
     maximum-mesh-size  = 0.5
     time-stepping      = global
     type const         = linear
-    terms const        = ncp
+    terms const        = ncp,pointsources:1
     optimisation const = generic
     language const     = C
 
@@ -55,8 +55,16 @@ exahype-project earthadj
       variables const = sigma:3,velocity:2
       time            = 0.0
       repeat          = 0.1
-      output          = output/twomaterials
-      end plot 
+      output          = output/tmp
+      end plot
+
+      plot probe::ascii ProbeWriter
+          variables const = 8
+          time            = 0.0
+          repeat          = 0.05
+          output          = output/receiver_1
+          select          = x:3.0,y:4.0
+      end plot
   end solver
 
 end exahype-project
