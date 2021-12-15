@@ -47,15 +47,29 @@ void earthadj::Forward::adjustPointSolution(const double* const x,const double t
 //    Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
 	Q[uu]=0.0;
 	Q[vv]=0.0;
-    if(xx<7.5) {
-      Q[lamb] = 2.0;
-      Q[mu] = 0.5;
-    }
-    else{
-      Q[lamb] = 2.0;
-      Q[mu] = 2.0;
-    }
-    Q[rho] = 1.0;
+//    if(xx<7.5) {
+//      Q[lamb] = 2.0;
+//      Q[mu] = 0.5;
+//    }
+//    else{
+//      Q[lamb] = 2.0;
+//      Q[mu] = 2.0;
+//    }
+//    Q[rho] = 1.0;
+
+	//LOH non scaled:
+	  if(yy<-1000) {
+		  Q[rho]=2700;
+		  Q[mu]=30.67e9;
+		  Q[lamb]=144e9;
+
+
+	  } else{
+		  Q[rho]=2600;
+		  Q[mu]=10.4e9;
+		  Q[lamb]=36.4e9;
+	  }
+
   }
 }
 
@@ -65,19 +79,11 @@ void earthadj::Forward::boundaryValues(const double* const x,const double t,cons
   //      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
   // Specified traction
-  specifiedTraction(direction, stateIn, stateOut);
-
-  // Specified Motion
-
-
-
-
-// Zeroing BOundary
-//  for(int i=0;i<5;i++)
-//    stateOut[i]=0.0;
-
-
-
+  if(faceIndex==3){
+	  freeSurface(direction,stateIn,stateOut);
+  } else{
+	  specifiedTraction(direction, stateIn, stateOut);
+  }
 }
 
 exahype::solvers::Solver::RefinementControl earthadj::Forward::refinementCriterion(const double* const luh,const tarch::la::Vector<DIMENSIONS,double>& cellCentre,const tarch::la::Vector<DIMENSIONS,double>& cellSize,double t,const int level) {
@@ -96,6 +102,8 @@ exahype::solvers::Solver::RefinementControl earthadj::Forward::refinementCriteri
   //  }
   
   // @todo Please implement/augment if required
+  if(cellCentre[0]<12000&&cellCentre[0]> -2000&&cellCentre[1]>-3000)
+  	return exahype::solvers::Solver::RefinementControl::Refine;
   return exahype::solvers::Solver::RefinementControl::Keep;
 }
 
@@ -159,18 +167,16 @@ void  earthadj::Forward::nonConservativeProduct(const double* const Q,const doub
 
 void earthadj::Forward::initPointSourceLocations(const std::vector<std::string> &cmdlineargs,
 												 const exahype::parser::ParserView &constants) {
-	pointSourceLocation[0][0]=5.0;
-	pointSourceLocation[0][1]=5.0;
+	pointSourceLocation[0][0]=.0;
+	pointSourceLocation[0][1]=-2000.0;
 }
 
 
 void earthadj::Forward::pointSource(const double *const Q, const double *const x, const double t, const double dt,
 									double *const forceVector, int n) {
 	double T=0.1;
-	double M_0=1000;
+	double M_0=1e18;
 	auto M_xy=(M_0*t/(T*T))*std::exp(-t/T);
-	if(t>1)
-		M_xy=0.0;
 	forceVector[sigma12]=M_xy;
 	forceVector[sigma11]=0.0;
 	forceVector[sigma22]=0.0;
