@@ -33,14 +33,28 @@ void earthadj::Adjoint::adjustPointSolution(const double* const x,const double t
   
   // @todo Please implement/augment if required
   if (tarch::la::equals(t,0.0)) {
-    Q[0] = 0.0;
-    Q[1] = 0.0;
-    Q[2] = 0.0;
-    Q[3] = 0.0;
-    Q[4] = 0.0;
-    Q[5] = 0.0;
-    Q[6] = 0.0;
-    Q[7] = 0.0;
+	  auto xx=x[0];
+	  auto yy=x[1];
+
+	  auto dir=std::exp(-(xx-3)*(xx-3)*25-(yy-4)*(yy-4)*25)/(25*M_PI);
+
+
+	  Q[sigma11] = 1.0*dir;//dir*-125.153;
+	  Q[sigma22] = 1.0*dir;//80.77*dir;
+	  Q[sigma12] = 1.0*dir;//-28.6597*dir;
+//    Q[uu] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));
+//    Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
+	  Q[uu]=0.0;//-86.857*dir;
+	  Q[vv]=0.0;//25.2797*dir;
+	  if(xx<7.5) {
+		  Q[lamb] = 2.0;
+		  Q[mu] = 0.5;
+	  }
+	  else{
+		  Q[lamb] = 2.0;
+		  Q[mu] = 2.0;
+	  }
+	  Q[rho] = 1.0;
   }
 }
 

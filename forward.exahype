@@ -62,7 +62,7 @@ exahype-project earthadj
           variables const = 8
           time            = 0.0
           repeat          = 0.05
-          output          = output/receiver_1
+          output          = output/adj1
           select          = x:3.0,y:4.0
       end plot
   end solver
