@@ -22,8 +22,9 @@ void earthadj::Adjoint::init(const std::vector<std::string>& cmdlineargs,const e
   // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
   
   // @todo Please implement/augment if required
+	initPointSourceLocations(cmdlineargs,constants);
 
-    
+
 }
 
 void earthadj::Adjoint::adjustPointSolution(const double* const x,const double t,const double dt,double* const Q) {
@@ -36,7 +37,7 @@ void earthadj::Adjoint::adjustPointSolution(const double* const x,const double t
 	  auto xx=x[0];
 	  auto yy=x[1];
 
-	  auto dir=std::exp(-(xx-3)*(xx-3)*25-(yy-4)*(yy-4)*25)/(25*M_PI);
+	  auto dir=0.0;//std::exp(-(xx-3)*(xx-3)*25-(yy-4)*(yy-4)*25)/(25*M_PI);
 
 
 	  Q[sigma11] = 1.0*dir;//dir*-125.153;
@@ -131,7 +132,24 @@ void earthadj::Adjoint::flux(const double* const Q,double** const F) {
   
 }
 
+void earthadj::Adjoint::initPointSourceLocations(const std::vector<std::string> &cmdlineargs,
+												 const exahype::parser::ParserView &constants) {
+	pointSourceLocation[0][0]=3.0;
+	pointSourceLocation[0][1]=4.0;
+}
 
+
+void earthadj::Adjoint::pointSource(const double *const Q, const double *const x, const double t, const double dt,
+									double *const forceVector, int n) {
+	double T=0.1;
+	double M_0=1e6;
+	auto M_xy=(M_0*t/(T*T))*std::exp(-t*10/T);
+	forceVector[sigma12]=M_xy;
+	forceVector[sigma11]=M_xy;
+	forceVector[sigma22]=M_xy;
+	forceVector[uu]=0.0;
+	forceVector[vv]=0.0;
+}
 
 
 
