@@ -153,7 +153,7 @@ class earthadj::Adjoint : public earthadj::AbstractAdjoint {
      * @param[in] cmdlineargs the command line arguments.
      * @param[in] constants   access to the constants specified for the solver.
      */
-	void initPointSourceLocations(const std::vector<std::string>& cmdlineargs,const exahype::parser::ParserView& constants);
+//	void initPointSourceLocations(const std::vector<std::string>& cmdlineargs,const exahype::parser::ParserView& constants);
 
 
 	/**
@@ -174,7 +174,7 @@ class earthadj::Adjoint : public earthadj::AbstractAdjoint {
 	 * @todo LR: Is dt really needed?
 	 * @todo LR: specify size of forceVector
 	 */
-	void pointSource(const double* const Q,const double* const x,const double t,const double dt, double* const forceVector,int n) override;
+//	void pointSource(const double* const Q,const double* const x,const double t,const double dt, double* const forceVector,int n) override;
 
 
 /* multiplyMaterialParameterMatrix() not included, as requested in the specification file */

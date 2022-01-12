@@ -22,7 +22,7 @@ void earthadj::Adjoint::init(const std::vector<std::string>& cmdlineargs,const e
   // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
   
   // @todo Please implement/augment if required
-	initPointSourceLocations(cmdlineargs,constants);
+//	initPointSourceLocations(cmdlineargs,constants);
 
 
 }
@@ -37,12 +37,17 @@ void earthadj::Adjoint::adjustPointSolution(const double* const x,const double t
 	  auto xx=x[0];
 	  auto yy=x[1];
 
-	  auto dir=0.0;//std::exp(-(xx-3)*(xx-3)*25-(yy-4)*(yy-4)*25)/(25*M_PI);
+	  auto dir=1.0;//std::exp(-(xx-3)*(xx-3)*25-(yy-4)*(yy-4)*25)/(25*M_PI);
 
-
-	  Q[sigma11] = 1.0*dir;//dir*-125.153;
-	  Q[sigma22] = 1.0*dir;//80.77*dir;
-	  Q[sigma12] = 1.0*dir;//-28.6597*dir;
+	  if((xx<3.5&&xx>2.5)&&(yy<3.5&&yy>2.5)) {
+		  Q[sigma11] = 1.0 * dir;//dir*-125.153;
+		  Q[sigma22] = 1.0 * dir;//80.77*dir;
+		  Q[sigma12] = 1.0 * dir;//-28.6597*dir;
+	  } else{
+		  Q[sigma11] = 0.0;
+		  Q[sigma22] = 0.0;
+		  Q[sigma12] = 0.0;
+	  }
 //    Q[uu] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));
 //    Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
 	  Q[uu]=0.0;//-86.857*dir;
@@ -84,7 +89,11 @@ exahype::solvers::Solver::RefinementControl earthadj::Adjoint::refinementCriteri
   //  }
   
   // @todo Please implement/augment if required
-  return exahype::solvers::Solver::RefinementControl::Keep;
+  if (t==0)
+	if(cellCentre[0]<3&&cellCentre[1]> 4&&cellCentre[1]<8)
+  		return exahype::solvers::Solver::RefinementControl::Refine;
+	return exahype::solvers::Solver::RefinementControl::Keep;
+
 }
 
 //*****************************************************************************
@@ -132,6 +141,7 @@ void earthadj::Adjoint::flux(const double* const Q,double** const F) {
   
 }
 
+/*
 void earthadj::Adjoint::initPointSourceLocations(const std::vector<std::string> &cmdlineargs,
 												 const exahype::parser::ParserView &constants) {
 	pointSourceLocation[0][0]=3.0;
@@ -142,14 +152,15 @@ void earthadj::Adjoint::initPointSourceLocations(const std::vector<std::string> 
 void earthadj::Adjoint::pointSource(const double *const Q, const double *const x, const double t, const double dt,
 									double *const forceVector, int n) {
 	double T=0.1;
-	double M_0=1e6;
-	auto M_xy=(M_0*t/(T*T))*std::exp(-t*10/T);
+	double M_0=1e4;
+//	auto M_xy=(M_0*t/(T*T))*std::exp(-t*10/T);
+	auto M_xy=M_0;
 	forceVector[sigma12]=M_xy;
 	forceVector[sigma11]=M_xy;
 	forceVector[sigma22]=M_xy;
 	forceVector[uu]=0.0;
 	forceVector[vv]=0.0;
-}
+}*/
 
 
 
