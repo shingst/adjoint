@@ -148,3 +148,4 @@ README_generated.md
 *.mp4
 *.webm
 /*/ExaHyPE-earthadj
+/adjoint/build/
