@@ -5,7 +5,17 @@
 #ifndef EXAHYPE_ENGINE_PARSEMR_H
 #define EXAHYPE_ENGINE_PARSEMR_H
 
-int64_t * parse(const char *filename);
+
+
+class ParserMR {
+public:
+	int64_t *data; //data is handled by dataowner
+	std::vector<char> dataowner;//Do not remove, destruction deallocates data
+
+
+	void parse(const char *filename);
+
+};
 
 
 
