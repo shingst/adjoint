@@ -25,9 +25,10 @@ tarch::logging::Log earthadj::Forward::_log( "earthadj::Forward" );
 void earthadj::Forward::init(const std::vector<std::string>& cmdlineargs,const exahype::parser::ParserView& constants) {
   // Tip: You find documentation for this method in header file "earthadj::Forward.h".
   
-  // @todo Please implement/augment if required
+  // @todo read when to refine
+  	refine= true;
 	initPointSourceLocations(cmdlineargs,constants);
-
+	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/test2.npy",_domainOffset,_domainSize);
 }
 
 void earthadj::Forward::adjustPointSolution(const double* const x,const double t,const double dt,double* const Q) {
@@ -104,7 +105,14 @@ exahype::solvers::Solver::RefinementControl earthadj::Forward::refinementCriteri
   // @todo Please implement/augment if required
 //  if(cellCentre[0]<12000&&cellCentre[0]> -2000&&cellCentre[1]>-3000)
 //  	return exahype::solvers::Solver::RefinementControl::Refine;
-  return exahype::solvers::Solver::RefinementControl::Keep;
+	if(refine&&t==0){
+		auto lvl=mrparser.get_level(cellCentre,cellSize);
+		if(level-getCoarsestMeshLevel()<lvl)
+			return exahype::solvers::Solver::RefinementControl::Refine;
+		else
+			return exahype::solvers::Solver::RefinementControl::Keep;
+	}
+	return exahype::solvers::Solver::RefinementControl::Keep;
 }
 
 //*****************************************************************************
@@ -122,7 +130,7 @@ void earthadj::Forward::eigenvalues(const double* const Q,const int direction,do
   // @todo Please implement/augment if required
   auto cp=std::sqrt((Q[lamb]+2*Q[mu])/Q[rho]);
   auto cs=std::sqrt(Q[mu]/Q[rho]);
-
+//	std::cout << mrparser.dataowner[direction]<<"\n";
 
   lambda[0] = -cp;
   lambda[1] = cp;

@@ -14,6 +14,7 @@
 
 #include "AbstractForward.h"
 #include "exahype/parser/ParserView.h"
+#include "parserMR.h"
 
 /**
  * We use Peano's logging
@@ -29,6 +30,8 @@ class earthadj::Forward : public earthadj::AbstractForward {
     /**
      * Log device
      */
+	ParserMR mrparser;
+	bool refine=false;
     static tarch::logging::Log _log;
   public:
     Forward(
