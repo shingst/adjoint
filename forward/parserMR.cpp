@@ -41,11 +41,6 @@ int ParserMR::get_level(const tarch::la::Vector<2, double> &cellCentre, const ta
 	auto ymap=(cellCentre[1]-offset[1])*ysize/domainsize[1];
 	auto yind= (int)std::floor(ymap-0.5);
 
-//	for (int i = 0; i < 2; ++i) {
-//		for (int j = 0; j < 2; ++j) {
-//			ret=std::max(ret,(int)data[xind+i+(yind+j)*xsize]);
-//		}
-//	}
 	int ret=0;
 	if(xind>0){
 		if(yind>0)

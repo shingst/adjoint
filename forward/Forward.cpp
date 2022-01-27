@@ -28,7 +28,8 @@ void earthadj::Forward::init(const std::vector<std::string>& cmdlineargs,const e
   // @todo read when to refine
   	refine= true;
 	initPointSourceLocations(cmdlineargs,constants);
-	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/test2.npy",_domainOffset,_domainSize);
+//	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/test1-0.npy",_domainOffset,_domainSize);
+	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/no-refinement.npy",_domainOffset,_domainSize);
 }
 
 void earthadj::Forward::adjustPointSolution(const double* const x,const double t,const double dt,double* const Q) {
@@ -44,10 +45,16 @@ void earthadj::Forward::adjustPointSolution(const double* const x,const double t
     Q[sigma11] = 0.0;
     Q[sigma22] = 0.0;
     Q[sigma12] = 0.0;
-//    Q[uu] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));
-//    Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
 	Q[uu]=0.0;
 	Q[vv]=0.0;
+
+
+
+
+
+
+
+	// first example
     if(xx<7.5) {
       Q[lamb] = 2.0;
       Q[mu] = 0.5;
@@ -57,6 +64,11 @@ void earthadj::Forward::adjustPointSolution(const double* const x,const double t
       Q[mu] = 2.0;
     }
     Q[rho] = 1.0;
+
+
+
+
+
 
 	//LOH non scaled:
 //	  if(yy<-1000) {
@@ -83,7 +95,7 @@ void earthadj::Forward::boundaryValues(const double* const x,const double t,cons
   if(faceIndex==3){
 	  freeSurface(direction,stateIn,stateOut);
   } else{
-	  specifiedTraction(direction, stateIn, stateOut);
+	  zeroBoundary(direction, stateIn, stateOut);
   }
 }
 

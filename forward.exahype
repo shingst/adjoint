@@ -16,12 +16,12 @@ exahype-project earthadj
   end computational-domain
 
   /*Configure shared memory settings*/
-  /*shared-memory
+  shared-memory
     identifier               = dummy
-    configure                = {background-tasks:8}
-    cores                    = 8
+    configure                = {background-tasks:7}
+    cores                    = 1
     properties-file          = sharedmemory.properties
-  end shared-memory*/
+  end shared-memory
 
   /*Optimiziation: DO N0T TOUCH*/
   global-optimisation
@@ -56,14 +56,14 @@ exahype-project earthadj
       variables const = sigma:3,velocity:2
       time            = 0.0
       repeat          = 0.1
-      output          = output/refine
+      output          = output/refinD
   end plot
 
   plot probe::ascii ProbeWriter
       variables const = 8
       time            = 0.0
       repeat          = 0.05
-      output          = output/adj1
+      output          = output/compfullref
       select          = x:3.0,y:4.0
   end plot
   end solver
