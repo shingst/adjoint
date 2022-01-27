@@ -15,83 +15,88 @@
 #include "../elasticutil.h"
 
 
-tarch::logging::Log earthadj::Adjoint::_log( "earthadj::Adjoint" );
+tarch::logging::Log earthadj::Adjoint::_log("earthadj::Adjoint");
 
 
-void earthadj::Adjoint::init(const std::vector<std::string>& cmdlineargs,const exahype::parser::ParserView& constants) {
-  // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
-  
-  // @todo Please implement/augment if required
+void
+earthadj::Adjoint::init(const std::vector<std::string> &cmdlineargs, const exahype::parser::ParserView &constants) {
+	// Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
+
+	// @todo Please implement/augment if required
 //	initPointSourceLocations(cmdlineargs,constants);
 
 
 }
 
-void earthadj::Adjoint::adjustPointSolution(const double* const x,const double t,const double dt,double* const Q) {
-  // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
-  // Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time 
-  //      constants such as Order, NumberOfVariables, and NumberOfParameters.
-  
-  // @todo Please implement/augment if required
-  if (tarch::la::equals(t,0.0)) {
-	  auto xx=x[0];
-	  auto yy=x[1];
+void earthadj::Adjoint::adjustPointSolution(const double *const x, const double t, const double dt, double *const Q) {
+	// Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
+	// Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time
+	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
-	  auto dir=1.0;//std::exp(-(xx-3)*(xx-3)*25-(yy-4)*(yy-4)*25)/(25*M_PI);
+	// @todo Please implement/augment if required
+	if (tarch::la::equals(t, 0.0)) {
+		auto xx = x[0];
+		auto yy = x[1];
 
-	  if((xx<3.5&&xx>2.5)&&(yy<3.5&&yy>2.5)) {
-		  Q[sigma11] = 1.0 * dir;//dir*-125.153;
-		  Q[sigma22] = 1.0 * dir;//80.77*dir;
-		  Q[sigma12] = 1.0 * dir;//-28.6597*dir;
-	  } else{
-		  Q[sigma11] = 0.0;
-		  Q[sigma22] = 0.0;
-		  Q[sigma12] = 0.0;
-	  }
+		auto dir = 1.0;//std::exp(-(xx-3)*(xx-3)*25-(yy-4)*(yy-4)*25)/(25*M_PI);
+
+		if ((xx < 3.5 && xx > 2.5) && (yy < 3.5 && yy > 2.5)) {
+			Q[sigma11] = 1.0 * dir;//dir*-125.153;
+			Q[sigma22] = 1.0 * dir;//80.77*dir;
+			Q[sigma12] = 1.0 * dir;//-28.6597*dir;
+		} else {
+			Q[sigma11] = 0.0;
+			Q[sigma22] = 0.0;
+			Q[sigma12] = 0.0;
+		}
 //    Q[uu] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));
 //    Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
-	  Q[uu]=0.0;//-86.857*dir;
-	  Q[vv]=0.0;//25.2797*dir;
-	  if(xx<7.5) {
-		  Q[lamb] = 2.0;
-		  Q[mu] = 0.5;
-	  }
-	  else{
-		  Q[lamb] = 2.0;
-		  Q[mu] = 2.0;
-	  }
-	  Q[rho] = 1.0;
-  }
+		Q[uu] = 0.0;//-86.857*dir;
+		Q[vv] = 0.0;//25.2797*dir;
+		if (xx < 7.5) {
+			Q[lamb] = 2.0;
+			Q[mu] = 0.5;
+		} else {
+			Q[lamb] = 2.0;
+			Q[mu] = 2.0;
+		}
+		Q[rho] = 1.0;
+	}
 }
 
-void earthadj::Adjoint::boundaryValues(const double* const x,const double t,const double dt,const int faceIndex,const int direction,const double* const fluxIn,const double* const stateIn,const double* const gradStateIn,double* const fluxOut,double* const stateOut) {
-  // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
-  // Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time 
-  //      constants such as Order, NumberOfVariables, and NumberOfParameters.
+void earthadj::Adjoint::boundaryValues(const double *const x, const double t, const double dt, const int faceIndex,
+									   const int direction, const double *const fluxIn, const double *const stateIn,
+									   const double *const gradStateIn, double *const fluxOut, double *const stateOut) {
+	// Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
+	// Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time
+	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
-  // @todo Please implement/augment if required
-  zeroBoundary(direction,stateIn,stateOut);
+	// @todo Please implement/augment if required
+	zeroBoundary(direction, stateIn, stateOut);
 }
 
-exahype::solvers::Solver::RefinementControl earthadj::Adjoint::refinementCriterion(const double* const luh,const tarch::la::Vector<DIMENSIONS,double>& cellCentre,const tarch::la::Vector<DIMENSIONS,double>& cellSize,double t,const int level) {
-  // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
-  // Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time 
-  //      constants such as Order, NumberOfVariables, and NumberOfParameters.
-  // Tip: See header file "peano/utils/Loop.h" for dimension-agnostic for loops.
-  
-  //  Example: Loop over all pointwise state variables (plus parameters)
-  //
-  //  constexpr int sizeOfQ = NumberOfVariables+NumberOfParameters;
-  //  dfor(i,Order+1) {
-  //    const int iLinearised = dLinearised(i,Order+1);
-  //    const double* const Q = luh + iLinearised * sizeOfQ; // pointwise state variables (plus parameters)
-  //    // use Q[0], Q[1], ... Q[sizeOfQ-1]
-  //  }
-  
-  // @todo Please implement/augment if required
-  if (t==0)
-	if(cellCentre[0]<3&&cellCentre[1]> 4&&cellCentre[1]<8)
-  		return exahype::solvers::Solver::RefinementControl::Refine;
+exahype::solvers::Solver::RefinementControl
+earthadj::Adjoint::refinementCriterion(const double *const luh, const tarch::la::Vector<DIMENSIONS, double> &cellCentre,
+									   const tarch::la::Vector<DIMENSIONS, double> &cellSize, double t,
+									   const int level) {
+	// Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
+	// Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time
+	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
+	// Tip: See header file "peano/utils/Loop.h" for dimension-agnostic for loops.
+
+	//  Example: Loop over all pointwise state variables (plus parameters)
+	//
+	//  constexpr int sizeOfQ = NumberOfVariables+NumberOfParameters;
+	//  dfor(i,Order+1) {
+	//    const int iLinearised = dLinearised(i,Order+1);
+	//    const double* const Q = luh + iLinearised * sizeOfQ; // pointwise state variables (plus parameters)
+	//    // use Q[0], Q[1], ... Q[sizeOfQ-1]
+	//  }
+
+	// @todo Please implement/augment if required
+	if (t == 0)
+		if (cellCentre[0] < 3 && cellCentre[1] > 4 && cellCentre[1] < 8)
+			return exahype::solvers::Solver::RefinementControl::Refine;
 	return exahype::solvers::Solver::RefinementControl::Keep;
 
 }
@@ -103,42 +108,39 @@ exahype::solvers::Solver::RefinementControl earthadj::Adjoint::refinementCriteri
 //*****************************************************************************
 
 
-void earthadj::Adjoint::eigenvalues(const double* const Q,const int direction,double* const lambda) {
-  // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
-  // Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time 
-  //      constants such as Order, NumberOfVariables, and NumberOfParameters.
-  auto cp=std::sqrt((Q[lamb]+2*Q[mu])/Q[rho]);
-  auto cs=std::sqrt(Q[mu]/Q[rho]);
-  // @todo Please implement/augment if required
-  lambda[0] = -cp;
-  lambda[1] = cp;
-  lambda[2] = -cs;
-  lambda[3] = cs;
-  lambda[4] = 0;
+void earthadj::Adjoint::eigenvalues(const double *const Q, const int direction, double *const lambda) {
+	// Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
+	// Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time
+	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
+	auto cp = std::sqrt((Q[lamb] + 2 * Q[mu]) / Q[rho]);
+	auto cs = std::sqrt(Q[mu] / Q[rho]);
+	// @todo Please implement/augment if required
+	lambda[0] = -cp;
+	lambda[1] = cp;
+	lambda[2] = -cs;
+	lambda[3] = cs;
+	lambda[4] = 0;
 }
 
 
+void earthadj::Adjoint::flux(const double *const Q, double **const F) {
+	// Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
+	// Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time
+	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
+	// @todo Please implement/augment if required
+	F[0][sigma11] = Q[uu] / Q[rho];
+	F[0][sigma22] = 0.0;
+	F[0][sigma12] = Q[vv] / Q[rho];
+	F[0][uu] = (Q[lamb] + 2 * Q[mu]) * Q[sigma11] + Q[lamb] * Q[sigma22];
+	F[0][vv] = Q[mu] * Q[sigma12];
 
+	F[1][sigma11] = 0.0;
+	F[1][sigma22] = Q[vv] / Q[rho];
+	F[1][sigma12] = Q[uu] / Q[rho];
+	F[1][uu] = Q[mu] * Q[sigma12];
+	F[1][vv] = (Q[lamb] + 2 * Q[mu]) * Q[sigma22] + Q[lamb] * Q[sigma11];
 
-void earthadj::Adjoint::flux(const double* const Q,double** const F) {
-  // Tip: You find documentation for this method in header file "earthadj::Adjoint.h".
-  // Tip: See header file "earthadj::AbstractAdjoint.h" for toolkit generated compile-time 
-  //      constants such as Order, NumberOfVariables, and NumberOfParameters.
-  
-  // @todo Please implement/augment if required
-  F[0][sigma11] = Q[uu]/Q[rho];
-  F[0][sigma22] = 0.0;
-  F[0][sigma12] = Q[vv]/Q[rho];
-  F[0][uu] = (Q[lamb]+2*Q[mu])*Q[sigma11]+Q[lamb]*Q[sigma22];
-  F[0][vv] = Q[mu]*Q[sigma12];
-  
-  F[1][sigma11] = 0.0;
-  F[1][sigma22] = Q[vv]/Q[rho];
-  F[1][sigma12] = Q[uu]/Q[rho];
-  F[1][uu] = Q[mu]*Q[sigma12];
-  F[1][vv] = (Q[lamb]+2*Q[mu])*Q[sigma22]+Q[lamb]*Q[sigma11];
-  
 }
 
 /*
