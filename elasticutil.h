@@ -71,4 +71,26 @@ inline void freeSurface(const int direction,const double *const stateIn,double *
 	stateOut[rho] = stateIn[rho];
 }
 
+inline void second_example(double *const Q, double x,double y){
+	if( 2*x+y>22){ //2*x+y>22
+		Q[rho]=7;
+		Q[mu]=30;
+		Q[lamb]=100;
+	} else if (x+3*y>27){
+		Q[rho]=1.5;
+		Q[mu]=40;
+		Q[lamb]=100;
+	} else if(x+1.5*y<9){
+		Q[rho]=4.7;
+		Q[mu]=20;
+		Q[lamb]=100;
+	} else {
+		Q[rho]=2.7;
+		Q[mu]=30.67;
+		Q[lamb]=144;
+	}
+
+}
+
+
 #endif  // EXAHYPE_ENGINE_ELASTICUTIL_H

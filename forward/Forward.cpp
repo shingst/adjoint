@@ -44,25 +44,18 @@ void earthadj::Forward::adjustPointSolution(const double *const x, const double 
 		Q[uu] = 0.0;
 		Q[vv] = 0.0;
 
-
-
-
-
+		second_example(Q,xx,yy);
 
 
 		// first example
-		if (xx < 7.5) {
-			Q[lamb] = 2.0;
-			Q[mu] = 0.5;
-		} else {
-			Q[lamb] = 2.0;
-			Q[mu] = 2.0;
-		}
-		Q[rho] = 1.0;
-
-
-
-
+//		if (xx < 7.5) {
+//			Q[lamb] = 2.0;
+//			Q[mu] = 0.5;
+//		} else {
+//			Q[lamb] = 2.0;
+//			Q[mu] = 2.0;
+//		}
+//		Q[rho] = 1.0;
 
 
 		//LOH non scaled:
@@ -191,7 +184,7 @@ void earthadj::Forward::initPointSourceLocations(const std::vector<std::string> 
 void earthadj::Forward::pointSource(const double *const Q, const double *const x, const double t, const double dt,
 									double *const forceVector, int n) {
 	double T = 0.1;
-	double M_0 = 1e4;
+	double M_0 = 1e12;
 	auto M_xy = (M_0 * t / (T * T)) * std::exp(-t / T);
 	forceVector[sigma12] = M_xy;
 	forceVector[sigma11] = 0.0;
