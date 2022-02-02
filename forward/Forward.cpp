@@ -24,8 +24,8 @@ earthadj::Forward::init(const std::vector<std::string> &cmdlineargs, const exahy
 	// @todo read when to refine
 	refine = true;
 	initPointSourceLocations(cmdlineargs, constants);
-//	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/test1-0.npy",_domainOffset,_domainSize);
-	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/no-refinement.npy", _domainOffset, _domainSize);
+	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/balancing.npy", _domainOffset, _domainSize, 0);
+//	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/no-refinement.npy", _domainOffset, _domainSize);
 }
 
 void earthadj::Forward::adjustPointSolution(const double *const x, const double t, const double dt, double *const Q) {
@@ -111,12 +111,19 @@ earthadj::Forward::refinementCriterion(const double *const luh, const tarch::la:
 //  if(cellCentre[0]<12000&&cellCentre[0]> -2000&&cellCentre[1]>-3000)
 //  	return exahype::solvers::Solver::RefinementControl::Refine;
 	if (refine && t == 0) {
-		auto lvl = mrparser.get_level(cellCentre, cellSize);
+		auto lvl = mrparser.get_level(cellCentre, -42);
+		if(lvl>0)
+			std::cout <<"test\n";
 		if (level - getCoarsestMeshLevel() < lvl)
 			return exahype::solvers::Solver::RefinementControl::Refine;
 		else
 			return exahype::solvers::Solver::RefinementControl::Keep;
 	}
+////	if (cellCentre[0]<10.0/7&& cellCentre[1]<10.0/7)
+//	{
+////		std::cout <<"miau\n";
+//		return exahype::solvers::Solver::RefinementControl::Refine;
+//	}
 	return exahype::solvers::Solver::RefinementControl::Keep;
 }
 

@@ -15,12 +15,21 @@ public:
 	std::vector<char> dataowner;//Do not remove, destruction deallocates data
 	tarch::la::Vector<DIMENSIONS,double> offset;
 	tarch::la::Vector<DIMENSIONS,double> domainsize;
-	ulong xsize=0;
-	ulong ysize=0;
+	int xsize=0;
+	int ysize=0;
+	int xpoints=0;
+	int ypoints=0;
 
 
-	void parse(const char *filename, const tarch::la::Vector<2, double> &offsetPar, const tarch::la::Vector<2, double> &domainsizePar);
+	void parse(const char *filename, const tarch::la::Vector<2, double> &offsetPar,
+			   const tarch::la::Vector<2, double> &domainsizePar, const double maximumMeshSize);
 	int get_level(const tarch::la::Vector<DIMENSIONS,double>& cellCentre,const tarch::la::Vector<DIMENSIONS,double>& cellSize);
+	/**
+	 * Get level with data being aligned to the cells
+	 * @param cellCentre
+	 * @return
+	 */
+	int get_level(const tarch::la::Vector<2, double> &cellCentre, int reflvl);
 
 };
 

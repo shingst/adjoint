@@ -10,7 +10,8 @@
 
 
 // TODO remember 0 0 of array is lower left corner
-void ParserMR::parse(const char *filename, const tarch::la::Vector<2, double> &offsetPar, const tarch::la::Vector<2, double> &domainsizePar) {
+void ParserMR::parse(const char *filename, const tarch::la::Vector<2, double> &offsetPar,
+					 const tarch::la::Vector<2, double> &domainsizePar, const double maximumMeshSize) {
 //	std::ifstream ifstr{filename};
 //	long x=0;
 //	long y=0;
@@ -32,6 +33,10 @@ void ParserMR::parse(const char *filename, const tarch::la::Vector<2, double> &o
 	arr.data_holder->swap(dataowner);/// gives me owner ship of the data
 	xsize=arr.shape[0];
 	ysize=arr.shape[1];
+	xpoints=(int)std::pow(3.0,std::floor(std::log(maximumMeshSize/domainsize[0])/std::log(3)))-2;//pow is lsow but this is only called once
+	ypoints=(int)std::pow(3.0,std::floor(std::log(maximumMeshSize/domainsize[1])/std::log(3)))-2;
+
+
 //	std::cout <<"x"<< xsize<<"y"<<data[25]+0<<"\n";
 }
 
@@ -57,6 +62,14 @@ int ParserMR::get_level(const tarch::la::Vector<2, double> &cellCentre, const ta
 
 
 	return ret;
+}
+
+int ParserMR::get_level(const tarch::la::Vector<2, double> &cellCentre, int reflvl) {
+	auto xmap=(cellCentre[0]-offset[0])*xsize/domainsize[0];
+	auto xind= (int)std::floor(xmap);
+	auto ymap=(cellCentre[1]-offset[1])*ysize/domainsize[1];
+	auto yind= (int)std::floor(ymap);
+	return data[xind+(yind)*xsize];
 }
 
 
