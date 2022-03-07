@@ -13,6 +13,7 @@
 #include "kernels/KernelUtils.h"
 #include "peano/utils/Loop.h"
 #include "../elasticutil.h"
+#include "exahype/parser/Parser.h"
 
 tarch::logging::Log earthadj::Forward::_log("earthadj::Forward");
 
@@ -22,9 +23,14 @@ earthadj::Forward::init(const std::vector<std::string> &cmdlineargs, const exahy
 	// Tip: You find documentation for this method in header file "earthadj::Forward.h".
 
 	// @todo read when to refine
-	refine = true;
+	auto& parser=constants.getParser();
+
+	std::string path=parser.getStringFromPath("/solvers/0/adg","", true);
+	std::cout <<path<<"\n";
+	refine = path.length()>0;
 	initPointSourceLocations(cmdlineargs, constants);
-	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/balancing.npy", _domainOffset, _domainSize, 0);
+	if (refine)
+		mrparser.parse(path.data(), _domainOffset, _domainSize, 0);
 //	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/no-refinement.npy", _domainOffset, _domainSize);
 }
 
@@ -45,6 +51,7 @@ void earthadj::Forward::adjustPointSolution(const double *const x, const double 
 		Q[vv] = 0.0;
 
 		second_example(Q,xx,yy);
+//		vsp_helsinki(Q,xx,yy);
 
 
 		// first example
@@ -112,8 +119,6 @@ earthadj::Forward::refinementCriterion(const double *const luh, const tarch::la:
 //  	return exahype::solvers::Solver::RefinementControl::Refine;
 	if (refine && t == 0) {
 		auto lvl = mrparser.get_level(cellCentre, -42);
-		if(lvl>0)
-			std::cout <<"test\n";
 		if (level - getCoarsestMeshLevel() < lvl)
 			return exahype::solvers::Solver::RefinementControl::Refine;
 		else
@@ -191,7 +196,7 @@ void earthadj::Forward::initPointSourceLocations(const std::vector<std::string> 
 void earthadj::Forward::pointSource(const double *const Q, const double *const x, const double t, const double dt,
 									double *const forceVector, int n) {
 	double T = 0.1;
-	double M_0 = 1e12;
+	double M_0 = 1;
 	auto M_xy = (M_0 * t / (T * T)) * std::exp(-t / T);
 	forceVector[sigma12] = M_xy;
 	forceVector[sigma11] = 0.0;
