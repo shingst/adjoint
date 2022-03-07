@@ -71,25 +71,44 @@ inline void freeSurface(const int direction,const double *const stateIn,double *
 	stateOut[rho] = stateIn[rho];
 }
 
+// will only with templates in cpp 20
+inline void setQ(double *const Q,double s_wave_speed,double p_wave_speed,double rho_val){
+	Q[mu]=s_wave_speed*s_wave_speed*rho_val;
+	Q[lamb]=(p_wave_speed*p_wave_speed-2*s_wave_speed*s_wave_speed)*rho_val;
+	Q[rho]=rho_val;
+}
+
 inline void second_example(double *const Q, double x,double y){
 	if( 2*x+y>22){ //2*x+y>22
-		Q[rho]=7;
-		Q[mu]=30;
-		Q[lamb]=100;
+		setQ(Q,2.9,4.5,2.6);
 	} else if (x+3*y>27){
-		Q[rho]=1.5;
-		Q[mu]=40;
-		Q[lamb]=100;
+		setQ(Q,4.0,6.3,3.0);
 	} else if(x+1.5*y<9){
-		Q[rho]=4.7;
-		Q[mu]=20;
-		Q[lamb]=100;
+		setQ(Q,3.2,4.8,2.3);
 	} else {
-		Q[rho]=2.7;
-		Q[mu]=30.67;
-		Q[lamb]=144;
+		setQ(Q,3.464,6.0,2.7);
 	}
+}
 
+inline void vsp_helsinki(double *const Q, double x,double y){
+	double s,p=0.0;
+	if(y<2){
+		p=5.85+0.3*y;
+	} else if(y<2.5){
+		p=6.45+0.2*y;
+	} else if(y<3.0){
+		p=6.55;
+	} else if(y<3.5){
+		p=6.55-0.4*y;
+	}else if(y<4.0){
+		p=6.35-0.5*y;
+	} else if(y<6.0){
+		p=6.2-0.1*y;
+	} else{
+		p=6.0;
+	}
+	s=p/1.71;
+	setQ(Q,s,p,2.7);
 }
 
 

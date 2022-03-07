@@ -38,29 +38,44 @@ void earthadj::Adjoint::adjustPointSolution(const double *const x, const double 
 		auto xx = x[0];
 		auto yy = x[1];
 
-		auto dir = 1.0;//std::exp(-(xx-3)*(xx-3)*25-(yy-4)*(yy-4)*25)/(25*M_PI);
 
-		if ((xx < 3.5 && xx > 2.5) && (yy < 3.5 && yy > 2.5)) {
-			Q[sigma11] = 1.0 * dir;//dir*-125.153;
-			Q[sigma22] = 1.0 * dir;//80.77*dir;
-			Q[sigma12] = 1.0 * dir;//-28.6597*dir;
-		} else {
-			Q[sigma11] = 0.0;
-			Q[sigma22] = 0.0;
-			Q[sigma12] = 0.0;
-		}
+//		if ((xx < 8.5 && xx > 7.5) && (yy < 11.0 && yy > 9.0)) {
+		auto dir = std::exp(-(xx-8)*(xx-8)*4-(yy-9.99)*(yy-9.99)*4)/(4*M_PI);
+//		Q[sigma11] = dir;//dir*-125.153;
+//		Q[sigma22] = dir;//80.77*dir;
+//		Q[sigma12] = dir;//-28.6597*dir;
+//
+//		Q[uu]=0.0;//TODO !!!!!!!!
+//		Q[vv]=0.0;
+
+		Q[sigma11] = 0.0;//dir*-125.153;
+		Q[sigma22] = 0.0;//80.77*dir;
+		Q[sigma12] = 0.0;//-28.6597*dir;
+
+		Q[uu]=dir;//TODO cutoff direc delata?
+		Q[vv]=dir;
+//		} else {
+//			Q[sigma11] = 0.0;
+//			Q[sigma22] = 0.0;
+//			Q[sigma12] = 0.0;
+//			Q[uu]=0.0;
+//			Q[vv]=0.0;
+//		}
+
 //    Q[uu] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));
 //    Q[vv] = std::exp(-(xx-5)*(xx-5)-(yy-5)*(yy-5));;
-		Q[uu] = 0.0;//-86.857*dir;
-		Q[vv] = 0.0;//25.2797*dir;
-		if (xx < 7.5) {
-			Q[lamb] = 2.0;
-			Q[mu] = 0.5;
-		} else {
-			Q[lamb] = 2.0;
-			Q[mu] = 2.0;
-		}
-		Q[rho] = 1.0;
+//		Q[uu] = 0.0;//-86.857*dir;
+//		Q[vv] = 0.0;//25.2797*dir;
+//		if (xx < 7.5) {
+//			Q[lamb] = 2.0;
+//			Q[mu] = 0.5;
+//		} else {
+//			Q[lamb] = 2.0;
+//			Q[mu] = 2.0;
+//		}
+//		Q[rho] = 1.0;
+		second_example(Q,xx,yy);
+//		vsp_helsinki(Q,xx,yy);
 	}
 }
 
@@ -94,9 +109,9 @@ earthadj::Adjoint::refinementCriterion(const double *const luh, const tarch::la:
 	//  }
 
 	// @todo Please implement/augment if required
-	if (t == 0)
-		if (cellCentre[0] < 3 && cellCentre[1] > 4 && cellCentre[1] < 8)
-			return exahype::solvers::Solver::RefinementControl::Refine;
+//	if (t == 0)
+//		if (cellCentre[0] < 3 && cellCentre[1] > 4 && cellCentre[1] < 8)
+//			return exahype::solvers::Solver::RefinementControl::Refine;
 	return exahype::solvers::Solver::RefinementControl::Keep;
 
 }
