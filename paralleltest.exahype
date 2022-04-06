@@ -2,35 +2,34 @@ exahype-project earthadj
   /*Set paths*/
   peano-kernel-path const    = ./Peano
   exahype-path const         = ./ExaHyPE
-  output-directory const     = ./adjoint/forward/
-  architecture const         = noarch
+  output-directory const     = ./adjoint/mpitest/
+  architecture const         = hsw
   log-file                   = ./logs/mylogfile.log
   plotter-subdirectory const = Writers
 
  /*Configure the domain*/
   computational-domain
     dimension const          = 2
-    width                    = 58000,35000.0
-    offset                   = -26000.0,-35000.0
-    end-time                 = 9.0
+    width                    = 15.0,10.0
+    offset                   = 0.0,0.0
+    end-time                 = 3.0
   end computational-domain
 
   /*Configure shared memory settings*/
-  /*
-  shared-memory
-    autotuning_strategy      = autotuning_without_restart
-    configure                = {}
-    cores                    = 4
+  /*shared-memory
+    identifier               = dummy
+    configure                = {background-tasks:7}
+    cores                    = 1
     properties-file          = sharedmemory.properties
   end shared-memory*/
 
-  distributed-memory
-    ranks_per_node =10
-    identifier = static_load_balancing
-    configure = {greedy-naive,FCFS}
-    buffer-size = 64
-    timeout = 120
-  end distributed-memory
+    distributed-memory
+      ranks_per_node =10
+      identifier = static_load_balancing
+      configure = {hotspot,FCFS}
+      buffer-size = 64
+      timeout = 120
+    end distributed-memory
 
   /*Optimiziation: DO N0T TOUCH*/
   global-optimisation
@@ -52,13 +51,45 @@ exahype-project earthadj
     variables const    = sigma:3,v:2
     parameters const   = 3
     order const        = 3
-    maximum-mesh-size  = 1000
-    maximum-mesh-depth = 1
+    maximum-mesh-size  = 0.5
+    maximum-mesh-depth = 2
     time-stepping      = global
     type const         = linear
     terms const        = ncp,pointsources:1
-    optimisation const = generic
+    optimisation const = optimised
     language const     = C
+    adg                = /home/sven/exa/adjoint/forward/refin/2.npy
+
+  plot vtu::Cartesian::vertices::ascii VtkWriter
+      variables const = sigma:3,velocity:2
+      time            = 0.0
+      repeat          = 0.2
+      output          = output/hel/bb
+  end plot
+
+  plot probe::ascii ProbeWriter
+      variables const = 8
+      time            = 0.0
+      repeat          = 0.02
+      output          = output/hel/bb
+      select          = x:5.0,y:9.999
+  end plot
+
+  plot probe::ascii ProbeWriter
+    variables const = 8
+    time            = 0.0
+    repeat          = 0.02
+    output          = output/hel/bb
+    select          = x:8.0,y:9.99
+  end plot
+
+  plot probe::ascii ProbeWriter
+        variables const = 8
+        time            = 0.0
+        repeat          = 0.02
+        output          = output/hel/bb
+        select          = x:10.0,y:9.999
+    end plot
   end solver
 
 end exahype-project

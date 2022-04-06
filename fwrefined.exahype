@@ -44,37 +44,44 @@ exahype-project earthadj
     parameters const   = 3
     order const        = 3
     maximum-mesh-size  = 0.5
-    maximum-mesh-depth = 4
+    maximum-mesh-depth = 2
     time-stepping      = global
     type const         = linear
     terms const        = ncp,pointsources:1
     optimisation const = optimised
     language const     = C
-    adg                = /home/sven/uni/mt/mt/experiments/outputE/percentile4.npy
+    adg                = /home/sven/exa/adjoint/forward/output/hel/f5quarter.npy
 
-  /*##Add plotters here if needed */
   plot vtk::Cartesian::vertices::ascii VtkWriter
       variables const = sigma:3,velocity:2
       time            = 0.0
-      repeat          = 0.1
-      output          = output/percentile4
+      repeat          = 0.2
+      output          = output/hel/f5quarter
   end plot
 
   plot probe::ascii ProbeWriter
       variables const = 8
       time            = 0.0
-      repeat          = 0.05
-      output          = output/tmp
-      select          = x:6.0,y:9.0
+      repeat          = 0.02
+      output          = output/hel/f5quarter5
+      select          = x:5.0,y:9.999
   end plot
 
   plot probe::ascii ProbeWriter
     variables const = 8
     time            = 0.0
-    repeat          = 0.05
-    output          = output/tmp
+    repeat          = 0.02
+    output          = output/hel/f5quarter8
     select          = x:8.0,y:9.99
   end plot
+
+  plot probe::ascii ProbeWriter
+        variables const = 8
+        time            = 0.0
+        repeat          = 0.02
+        output          = output/hel/f5quarter10
+        select          = x:10.0,y:9.999
+    end plot
   end solver
 
 end exahype-project

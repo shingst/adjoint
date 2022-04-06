@@ -10,9 +10,9 @@ exahype-project earthadj
  /*Configure the domain*/
   computational-domain
     dimension const          = 2
-    width                    = 10.0,10.0
+    width                    = 15.0,10.0
     offset                   = 0.0,0.0
-    end-time                 = 9.0
+    end-time                 = 3.0
   end computational-domain
 
   /*Configure shared memory settings*/
@@ -50,22 +50,39 @@ exahype-project earthadj
     terms const        = ncp,pointsources:1
     optimisation const = optimised
     language const     = C
+    /*adg                = /home/sven/uni/mt/mt/experiments/outputE/center1.npy*/
 
   /*##Add plotters here if needed */
   plot vtk::Cartesian::vertices::ascii VtkWriter
       variables const = sigma:3,velocity:2
       time            = 0.0
-      repeat          = 0.1
-      output          = output/refinD
+      repeat          = 0.025
+      output          = output/hel/widecoarse
   end plot
 
   plot probe::ascii ProbeWriter
       variables const = 8
       time            = 0.0
-      repeat          = 0.05
-      output          = output/compfullref
-      select          = x:3.0,y:4.0
+      repeat          = 0.02
+      output          = output/hel/widecoarse5
+      select          = x:5.0,y:9.999
   end plot
+
+  plot probe::ascii ProbeWriter
+    variables const = 8
+    time            = 0.0
+    repeat          = 0.02
+    output          = output/hel/widecoarse8
+    select          = x:8.0,y:9.99
+  end plot
+
+  plot probe::ascii ProbeWriter
+        variables const = 8
+        time            = 0.0
+        repeat          = 0.02
+        output          = output/hel/widecoarse10
+        select          = x:10.0,y:9.999
+    end plot
   end solver
 
 end exahype-project
