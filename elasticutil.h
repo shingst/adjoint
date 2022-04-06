@@ -111,5 +111,9 @@ inline void vsp_helsinki(double *const Q, double x,double y){
 	setQ(Q,s,p,2.7);
 }
 
+inline void WP1(double *const Q, double x,double y){
+	setQ(Q,3.464,6.0,2.7);
+}
+
 
 #endif  // EXAHYPE_ENGINE_ELASTICUTIL_H

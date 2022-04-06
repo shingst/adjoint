@@ -50,8 +50,9 @@ void earthadj::Forward::adjustPointSolution(const double *const x, const double 
 		Q[uu] = 0.0;
 		Q[vv] = 0.0;
 
-		second_example(Q,xx,yy);
-//		vsp_helsinki(Q,xx,yy);
+//		WP1(Q,xx,yy);
+//		second_example(Q,xx,yy);
+		vsp_helsinki(Q,xx,yy);
 
 
 		// first example
@@ -94,6 +95,7 @@ void earthadj::Forward::boundaryValues(const double *const x, const double t, co
 	} else {
 		zeroBoundary(direction, stateIn, stateOut);
 	}
+//	zeroBoundary(direction,stateIn,stateOut);
 }
 
 exahype::solvers::Solver::RefinementControl
@@ -196,7 +198,7 @@ void earthadj::Forward::initPointSourceLocations(const std::vector<std::string> 
 void earthadj::Forward::pointSource(const double *const Q, const double *const x, const double t, const double dt,
 									double *const forceVector, int n) {
 	double T = 0.1;
-	double M_0 = 1;
+	double M_0 = 1.0e3;
 	auto M_xy = (M_0 * t / (T * T)) * std::exp(-t / T);
 	forceVector[sigma12] = M_xy;
 	forceVector[sigma11] = 0.0;
