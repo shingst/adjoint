@@ -90,7 +90,7 @@ void earthadj::Forward::boundaryValues(const double *const x, const double t, co
 	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
 	// Specified traction
-	if (faceIndex == 3) {
+	if (faceIndex == 2) {
 		freeSurface(direction, stateIn, stateOut);
 	} else {
 		zeroBoundary(direction, stateIn, stateOut);

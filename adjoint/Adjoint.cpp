@@ -39,7 +39,7 @@ void earthadj::Adjoint::adjustPointSolution(const double *const x, const double 
 		auto yy = x[1];
 
 		double probex=10.0;
-		double probey=9.990;
+		double probey=0.0;
 
 //		if ((xx < 8.5 && xx > 7.5) && (yy < 11.0 && yy > 9.0)) {
 		auto dir = std::exp(-(xx-probex)*(xx-probex)*4-(yy-probey)*(yy-probey)*4)/(4*M_PI);
@@ -91,7 +91,7 @@ void earthadj::Adjoint::boundaryValues(const double *const x, const double t, co
 
 	// @todo Please implement/augment if required
 //	zeroBoundary(direction, stateIn, stateOut);
-	if (faceIndex == 3) {
+	if (faceIndex == 2) {
 		freeSurface(direction, stateIn, stateOut);
 	} else {
 		zeroBoundary(direction, stateIn, stateOut);

@@ -95,15 +95,15 @@ inline void vsp_helsinki(double *const Q, double x,double y){
 	if(y<2){
 		p=5.85+0.3*y;
 	} else if(y<2.5){
-		p=6.45+0.2*y;
+		p=6.45+0.2*(y-2.0);
 	} else if(y<3.0){
 		p=6.55;
 	} else if(y<3.5){
-		p=6.55-0.4*y;
+		p=6.55-0.4*(y-3.0);
 	}else if(y<4.0){
-		p=6.35-0.5*y;
+		p=6.35-0.3*(y-3.5);
 	} else if(y<6.0){
-		p=6.2-0.1*y;
+		p=6.2-0.1*(y-4.0);
 	} else{
 		p=6.0;
 	}
