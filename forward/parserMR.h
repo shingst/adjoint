@@ -19,6 +19,7 @@ public:
 	int ysize=0;
 	int xpoints=0;
 	int ypoints=0;
+	int amr_steps=1;
 
 
 	void parse(const char *filename, const tarch::la::Vector<2, double> &offsetPar,
@@ -29,7 +30,7 @@ public:
 	 * @param cellCentre
 	 * @return
 	 */
-	int get_level(const tarch::la::Vector<2, double> &cellCentre, int reflvl);
+	int get_level(const tarch::la::Vector<2, double> &cellCentre, int gridnr);
 
 };
 

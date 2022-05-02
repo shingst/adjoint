@@ -33,6 +33,7 @@ private:
 	ParserMR mrparser;
 	bool refine = false;
 	static tarch::logging::Log _log;
+	double endtime=0.0;
 public:
 	Forward(const double maximumMeshSize, const int maximumMeshDepth, const int haloCells, const int haloBufferCells,
 			const int limiterBufferCells, const int regularisedFineGridLevels,

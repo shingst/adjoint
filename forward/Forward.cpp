@@ -14,6 +14,7 @@
 #include "peano/utils/Loop.h"
 #include "../elasticutil.h"
 #include "exahype/parser/Parser.h"
+#include <algorithm>
 
 tarch::logging::Log earthadj::Forward::_log("earthadj::Forward");
 
@@ -24,9 +25,11 @@ earthadj::Forward::init(const std::vector<std::string> &cmdlineargs, const exahy
 
 	// @todo read when to refine
 	auto& parser=constants.getParser();
+	//getPreviousMinTimeStamp(); //TODO might be interesting for refinement
 
 	std::string path=parser.getStringFromPath("/solvers/0/adg","", true);
-	std::cout <<path<<"\n";
+	endtime=parser.getDoubleFromPath("/computational_domain/end_time",-1.0,false);
+//	std::cout <<path.insert(path.length(),"2")<<"\n";
 	refine = path.length()>0;
 	initPointSourceLocations(cmdlineargs, constants);
 	if (refine)
@@ -53,7 +56,7 @@ void earthadj::Forward::adjustPointSolution(const double *const x, const double 
 //		WP1(Q,xx,yy);
 //		second_example(Q,xx,yy);
 		vsp_helsinki(Q,xx,yy);
-
+//		onlypvwaves(Q,xx,yy);
 
 		// first example
 //		if (xx < 7.5) {
@@ -119,18 +122,37 @@ earthadj::Forward::refinementCriterion(const double *const luh, const tarch::la:
 	// @todo Please implement/augment if required
 //  if(cellCentre[0]<12000&&cellCentre[0]> -2000&&cellCentre[1]>-3000)
 //  	return exahype::solvers::Solver::RefinementControl::Refine;
-	if (refine && t == 0) {
-		auto lvl = mrparser.get_level(cellCentre, -42);
-		if (level - getCoarsestMeshLevel() < lvl)
-			return exahype::solvers::Solver::RefinementControl::Refine;
-		else
-			return exahype::solvers::Solver::RefinementControl::Keep;
+	if (refine ) {
+		if (mrparser.amr_steps == 0){
+			if (t == 0) {
+				auto lvl = mrparser.get_level(cellCentre, -1);
+				if (level - getCoarsestMeshLevel() < lvl)
+					return exahype::solvers::Solver::RefinementControl::Refine;
+				else
+					return exahype::solvers::Solver::RefinementControl::Keep;
+			}
+		}else{
+			int gridnr=std::min((int)std::floor(t*mrparser.amr_steps/endtime)+7,mrparser.amr_steps-1);
+//			if(cellCentre[0]<0.2&&cellCentre[1]<0.2){
+//				printf("time %f,gridnr %d\n",t,gridnr);
+//			}
+			auto lvl = mrparser.get_level(cellCentre, gridnr);
+			if (level - getCoarsestMeshLevel() < lvl) {
+				std::cout<<"refine"<<cellCentre[0]<<"   "<<cellCentre[1]<<"level"<<level<<"\n";
+				return exahype::solvers::Solver::RefinementControl::Refine;
+			}
+			else {
+				if (level - getCoarsestMeshLevel() > lvl) {
+					std::cout<<"erase"<<cellCentre[0]<<"   "<<cellCentre[1]<<"level"<<level<<"\n";
+//					return exahype::solvers::Solver::RefinementControl::Erase;
+				}
+				else {
+//					std::cout<<"keep"<<cellCentre[0]<<"   "<<cellCentre[1]<<"level"<<level<<"\n";
+					return exahype::solvers::Solver::RefinementControl::Keep;
+				}
+			}
+		}
 	}
-////	if (cellCentre[0]<10.0/7&& cellCentre[1]<10.0/7)
-//	{
-////		std::cout <<"miau\n";
-//		return exahype::solvers::Solver::RefinementControl::Refine;
-//	}
 	return exahype::solvers::Solver::RefinementControl::Keep;
 }
 

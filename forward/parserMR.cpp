@@ -31,8 +31,16 @@ void ParserMR::parse(const char *filename, const tarch::la::Vector<2, double> &o
 	data = arr.data<int64_t>();//TODO switch to int
 	dataowner.push_back('a');
 	arr.data_holder->swap(dataowner);/// gives me owner ship of the data
-	xsize=arr.shape[0];
-	ysize=arr.shape[1];
+	if(arr.shape.size()==2){
+		xsize=arr.shape[0];
+		ysize=arr.shape[1];
+		amr_steps=0;
+	} else{
+		amr_steps=arr.shape[0];
+		xsize=arr.shape[1];
+		ysize=arr.shape[2];
+		std::cout<<amr_steps<<" "<<xsize<<" "<<ysize<<"\n";
+	}
 	xpoints=(int)std::pow(3.0,std::floor(std::log(maximumMeshSize/domainsize[0])/std::log(3)))-2;//pow is lsow but this is only called once
 	ypoints=(int)std::pow(3.0,std::floor(std::log(maximumMeshSize/domainsize[1])/std::log(3)))-2;
 
@@ -64,12 +72,15 @@ int ParserMR::get_level(const tarch::la::Vector<2, double> &cellCentre, const ta
 	return ret;
 }
 
-int ParserMR::get_level(const tarch::la::Vector<2, double> &cellCentre, int reflvl) {
+int ParserMR::get_level(const tarch::la::Vector<2, double> &cellCentre, int gridnr) {
 	auto xmap=(cellCentre[0]-offset[0])*xsize/domainsize[0];
 	auto xind= (int)std::floor(xmap);
 	auto ymap=(cellCentre[1]-offset[1])*ysize/domainsize[1];
 	auto yind= (int)std::floor(ymap);
-	return data[xind+(yind)*xsize];
+	if(gridnr==-1) //numpy changes their definition of order when adding another dimension (very funny)
+		return data[xind+(yind)*xsize];// numpys 'fortran order'
+	else
+		return data[xind*ysize+(yind)*1+gridnr*xsize*ysize];// numpys 'c order'
 }
 
 
