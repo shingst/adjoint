@@ -10,18 +10,18 @@ exahype-project earthadj
  /*Configure the domain*/
   computational-domain
     dimension const          = 2
-    width                    = 15.0,10.0
-    offset                   = 0.0,0.0
+    width                    = 30.0,15.0
+    offset                   = -5.0,0.0
     end-time                 = 3.0
   end computational-domain
 
-  /*Configure shared memory settings*/
+  /*Configure shared memory settings
   shared-memory
     identifier               = dummy
-    configure                = {background-tasks:7}
+    configure                = {background-tasks:1}
     cores                    = 1
     properties-file          = sharedmemory.properties
-  end shared-memory
+  end shared-memory*/
 
   /*Optimiziation: DO N0T TOUCH*/
   global-optimisation
@@ -50,37 +50,37 @@ exahype-project earthadj
     terms const        = ncp,pointsources:1
     optimisation const = optimised
     language const     = C
-    adg                = /home/sven/exa/adjoint/forward/output/hel/f5quarter.npy
+    adg                = /home/sven/exa/adjoint/forward/output/wel/wel8noroot.npy
 
   plot vtk::Cartesian::vertices::ascii VtkWriter
       variables const = sigma:3,velocity:2
       time            = 0.0
-      repeat          = 0.2
-      output          = output/hel/f5quarter
+      repeat          = 0.15
+      output          = output/wel/wel8noroot
   end plot
 
   plot probe::ascii ProbeWriter
       variables const = 8
       time            = 0.0
       repeat          = 0.02
-      output          = output/hel/f5quarter5
-      select          = x:5.0,y:9.999
+      output          = probes/wel/wel8noroot5
+      select          = x:5.0,y:0.0
   end plot
 
   plot probe::ascii ProbeWriter
     variables const = 8
     time            = 0.0
     repeat          = 0.02
-    output          = output/hel/f5quarter8
-    select          = x:8.0,y:9.99
+    output          = probes/wel/wel8noroot8
+    select          = x:8.0,y:0.0
   end plot
 
   plot probe::ascii ProbeWriter
         variables const = 8
         time            = 0.0
         repeat          = 0.02
-        output          = output/hel/f5quarter10
-        select          = x:10.0,y:9.999
+        output          = probes/wel/wel8noroot10
+        select          = x:10.0,y:0.0
     end plot
   end solver
 

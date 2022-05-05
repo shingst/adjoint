@@ -38,7 +38,7 @@ void earthadj::Adjoint::adjustPointSolution(const double *const x, const double 
 		auto xx = x[0];
 		auto yy = x[1];
 
-		double probex=10.0;
+		double probex=8.0;
 		double probey=0.0;
 
 //		if ((xx < 8.5 && xx > 7.5) && (yy < 11.0 && yy > 9.0)) {
@@ -54,8 +54,10 @@ void earthadj::Adjoint::adjustPointSolution(const double *const x, const double 
 		Q[sigma22] = 0.0;//80.77*dir;
 		Q[sigma12] = 0.0;//-28.6597*dir;
 
-		Q[uu]=dir;//TODO cutoff direc delata?
-		Q[vv]=dir;
+//		Q[uu]=-dir*3/5.83095;//dir;//TODO cutoff direc delata?
+//		Q[vv]=dir*5/5.83095;//dir;
+		Q[uu]=0.0;//dir;//TODO cutoff direc delata?
+		Q[vv]=0.0;//dir;
 //		} else {
 //			Q[sigma11] = 0.0;
 //			Q[sigma22] = 0.0;

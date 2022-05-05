@@ -115,5 +115,9 @@ inline void WP1(double *const Q, double x,double y){
 	setQ(Q,3.464,6.0,2.7);
 }
 
+inline void onlypvwaves(double *const Q, double x,double y){
+	setQ(Q,0.000,6.0,2.7);
+}
+
 
 #endif  // EXAHYPE_ENGINE_ELASTICUTIL_H
