@@ -1,0 +1,89 @@
+exahype-project earthadj
+  /*Set paths*/
+  peano-kernel-path const    = ./Peano
+  exahype-path const         = ./ExaHyPE
+  output-directory const     = ./adjoint/forward/
+  architecture const         = hsw
+  log-file                   = ./logs/mylogfile.log
+  plotter-subdirectory const = Writers
+
+ /*Configure the domain*/
+  computational-domain
+    dimension const          = 2
+    width                    = 20.0,30.0
+    offset                   = 0.0,0.0
+    end-time                 = 3.0
+  end computational-domain
+
+  /*Configure shared memory settings*/
+  shared-memory
+    identifier               = dummy
+    configure                = {background-tasks:7}
+    cores                    = 1
+    properties-file          = sharedmemory.properties
+  end shared-memory
+
+  /*Optimiziation: DO N0T TOUCH*/
+  global-optimisation
+      fuse-algorithmic-steps          = all
+      fuse-algorithmic-steps-rerun-factor   = 0.99
+      fuse-algorithmic-steps-diffusion-factor   = 0.99
+      spawn-predictor-as-background-thread = off
+      spawn-amr-background-threads         = off
+      /* 0.0 und 0.8 sind schon mal zwei Faktoren */
+      disable-vertex-exchange-in-time-steps = on
+      time-step-batch-factor           = 0.0
+      disable-metadata-exchange-in-batched-time-steps = off
+      double-compression = 0.0
+      spawn-double-compression-as-background-thread = off
+   end global-optimisation
+
+  /*Defines the hyperbolic PDE*/
+  solver ADER-DG Forward
+    variables const    = sigma:3,v:2
+    parameters const   = 3
+    order const        = 3
+    maximum-mesh-size  = 0.5
+    maximum-mesh-depth = 2
+    time-stepping      = global
+    type const         = linear
+    terms const        = ncp,pointsources:1
+    optimisation const = optimised
+    language const     = C
+    /*adg                = /home/sven/uni/mt/mt/experiments/outputE/center1.npy*/
+
+  /*##Add plotters here if needed */
+  plot vtk::Cartesian::vertices::ascii VtkWriter
+      variables const = sigma:3,velocity:2
+      time            = 0.0
+      repeat          = 0.025
+      output          = output/simple/coarse
+  end plot
+
+  plot probe::ascii ProbeWriter
+      variables const = 8
+      time            = 0.0
+      repeat          = 0.02
+      output          = probes/simple/coarse18
+      select          = x:13.0,y:18.0
+  end plot
+
+  plot probe::ascii ProbeWriter
+    variables const = 8
+    time            = 0.0
+    repeat          = 0.02
+    output          = probes/simple/coarse15
+    select          = x:12.0,y:15.0
+  end plot
+
+  plot probe::ascii ProbeWriter
+        variables const = 8
+        time            = 0.0
+        repeat          = 0.02
+        output          = probes/simple/coarse13
+        select          = x:9.0,y:13.0
+    end plot
+  end solver
+
+end exahype-project
+
