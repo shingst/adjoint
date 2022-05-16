@@ -17,10 +17,22 @@
 #include <algorithm>
 
 tarch::logging::Log earthadj::Forward::_log("earthadj::Forward");
+//#define SIMPLE
+//#define HEL
+#define ONLYPWAVES
 
 
 void
 earthadj::Forward::init(const std::vector<std::string> &cmdlineargs, const exahype::parser::ParserView &constants) {
+#ifdef HEL
+	std::cout<<"HEL\n";
+#endif
+#ifdef SIMPLE
+	std::cout<<"SIMPLE\n";
+#endif
+#ifdef ONLYPWAVES
+	std::cout<<"ONLYPWAVES\n";
+#endif
 	// Tip: You find documentation for this method in header file "earthadj::Forward.h".
 
 	// @todo read when to refine
@@ -55,8 +67,15 @@ void earthadj::Forward::adjustPointSolution(const double *const x, const double 
 
 //		WP1(Q,xx,yy);
 //		second_example(Q,xx,yy);
+#ifdef HEL
 		vsp_helsinki(Q,xx,yy);
-//		onlypvwaves(Q,xx,yy);
+#endif
+#ifdef SIMPLE
+		simple1(Q,xx,yy);
+#endif
+#ifdef ONLYPWAVES
+		onlypvwaves(Q,xx,yy);
+#endif
 
 		// first example
 //		if (xx < 7.5) {
@@ -93,12 +112,15 @@ void earthadj::Forward::boundaryValues(const double *const x, const double t, co
 	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
 	// Specified traction
+#ifdef SIMPLE
+	zeroBoundary(direction, stateIn, stateOut);
+#else
 	if (faceIndex == 2) {
 		freeSurface(direction, stateIn, stateOut);
 	} else {
 		zeroBoundary(direction, stateIn, stateOut);
 	}
-//	zeroBoundary(direction,stateIn,stateOut);
+#endif
 }
 
 exahype::solvers::Solver::RefinementControl
@@ -212,8 +234,13 @@ void earthadj::Forward::initPointSourceLocations(const std::vector<std::string> 
 												 const exahype::parser::ParserView &constants) {
 //	pointSourceLocation[0][0]=0.0;
 //	pointSourceLocation[0][1]=-2000.0;
+#ifdef SIMPLE
+	pointSourceLocation[0][0] = 7.0;
+	pointSourceLocation[0][1] = 15.0;
+#else
 	pointSourceLocation[0][0] = 5.0;
 	pointSourceLocation[0][1] = 5.0;
+#endif
 }
 
 
@@ -222,9 +249,15 @@ void earthadj::Forward::pointSource(const double *const Q, const double *const x
 	double T = 0.1;
 	double M_0 = 1.0e3;
 	auto M_xy = (M_0 * t / (T * T)) * std::exp(-t / T);
+#ifdef ONLYPWAVES
+	forceVector[sigma12] = 0.0;
+	forceVector[sigma11] = M_xy;
+	forceVector[sigma22] = M_xy;
+#else
 	forceVector[sigma12] = M_xy;
 	forceVector[sigma11] = 0.0;
 	forceVector[sigma22] = 0.0;
+#endif
 	forceVector[uu] = 0.0;
 	forceVector[vv] = 0.0;
 }

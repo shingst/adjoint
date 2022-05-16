@@ -16,6 +16,11 @@
 
 
 tarch::logging::Log earthadj::Adjoint::_log("earthadj::Adjoint");
+#define SIMPLE
+//#define HEL
+//#define ONLYPWAVES
+
+
 
 
 void
@@ -24,8 +29,15 @@ earthadj::Adjoint::init(const std::vector<std::string> &cmdlineargs, const exahy
 
 	// @todo Please implement/augment if required
 //	initPointSourceLocations(cmdlineargs,constants);
-
-
+#ifdef HEL
+	std::cout<<"HEL\n";
+#endif
+#ifdef SIMPLE
+	std::cout<<"SIMPLE\n";
+#endif
+#ifdef ONLYPWAVES
+	std::cout<<"ONLYPWAVES\n";
+#endif
 }
 
 void earthadj::Adjoint::adjustPointSolution(const double *const x, const double t, const double dt, double *const Q) {
@@ -38,26 +50,30 @@ void earthadj::Adjoint::adjustPointSolution(const double *const x, const double 
 		auto xx = x[0];
 		auto yy = x[1];
 
-		double probex=8.0;
-		double probey=0.0;
+		double probex=9.0;
+		double probey=13.0;
 
 //		if ((xx < 8.5 && xx > 7.5) && (yy < 11.0 && yy > 9.0)) {
 		auto dir = std::exp(-(xx-probex)*(xx-probex)*4-(yy-probey)*(yy-probey)*4)/(4*M_PI);
+//		auto dir = std::exp(-1.0*std::abs(1-(xx-probex)*(xx-probex)-(yy-probey)*(yy-probey)));
 //		Q[sigma11] = dir;//dir*-125.153;
 //		Q[sigma22] = dir;//80.77*dir;
 //		Q[sigma12] = dir;//-28.6597*dir;
 //
 //		Q[uu]=0.0;//TODO !!!!!!!!
 //		Q[vv]=0.0;
-
+//		Q[sigma11] = dir;//dir*-125.153;
+//		Q[sigma22] = dir;//80.77*dir;
 		Q[sigma11] = 0.0;//dir*-125.153;
 		Q[sigma22] = 0.0;//80.77*dir;
-		Q[sigma12] = 0.0;//-28.6597*dir;
+		Q[sigma12] = dir;//-28.6597*dir;
 
 //		Q[uu]=-dir*3/5.83095;//dir;//TODO cutoff direc delata?
 //		Q[vv]=dir*5/5.83095;//dir;
-		Q[uu]=0.0;//dir;//TODO cutoff direc delata?
-		Q[vv]=0.0;//dir;
+//		Q[uu]=dir;//TODO cutoff direc delata?
+//		Q[vv]=dir;
+		Q[uu]=0.0;//TODO cutoff direc delata?
+		Q[vv]=0.0;
 //		} else {
 //			Q[sigma11] = 0.0;
 //			Q[sigma22] = 0.0;
@@ -80,7 +96,15 @@ void earthadj::Adjoint::adjustPointSolution(const double *const x, const double 
 //		Q[rho] = 1.0;
 //		WP1(Q,xx,yy);
 //		second_example(Q,xx,yy);
+#ifdef HEL
 		vsp_helsinki(Q,xx,yy);
+#endif
+#ifdef SIMPLE
+		simple1(Q,xx,yy);
+#endif
+#ifdef ONLYPWAVES
+		onlypvwaves(Q,xx,yy);
+#endif
 	}
 }
 
@@ -92,12 +116,15 @@ void earthadj::Adjoint::boundaryValues(const double *const x, const double t, co
 	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
 	// @todo Please implement/augment if required
-//	zeroBoundary(direction, stateIn, stateOut);
+#ifdef SIMPLE
+	zeroBoundary(direction, stateIn, stateOut);
+#else
 	if (faceIndex == 2) {
 		freeSurface(direction, stateIn, stateOut);
 	} else {
 		zeroBoundary(direction, stateIn, stateOut);
 	}
+#endif
 }
 
 exahype::solvers::Solver::RefinementControl
