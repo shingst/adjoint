@@ -117,7 +117,34 @@ inline void WP1(double *const Q, double x,double y){
 
 inline void onlypvwaves(double *const Q, double x,double y){
 	setQ(Q,0.000,6.0,2.7);
+//	double s,p=0.0;
+//	if(y<2){
+//		p=5.85+0.3*y;
+//	} else if(y<2.5){
+//		p=6.45+0.2*(y-2.0);
+//	} else if(y<3.0){
+//		p=6.55;
+//	} else if(y<3.5){
+//		p=6.55-0.4*(y-3.0);
+//	}else if(y<4.0){
+//		p=6.35-0.3*(y-3.5);
+//	} else if(y<6.0){
+//		p=6.2-0.1*(y-4.0);
+//	} else{
+//		p=6.0;
+//	}
+//	s=0.0;
+//	setQ(Q,s,p,2.7);
 }
+
+inline void simple1(double *const Q, double x,double y){
+	if(x<10) {
+		setQ(Q, 3.464, 6.0, 2.7);
+	} else{
+		setQ(Q, 2.0, 4.0, 2.6);
+	}
+}
+
 
 
 #endif  // EXAHYPE_ENGINE_ELASTICUTIL_H
