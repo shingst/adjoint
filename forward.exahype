@@ -50,38 +50,37 @@ exahype-project earthadj
     terms const        = ncp,pointsources:1
     optimisation const = optimised
     language const     = C
-    /*adg                = /home/sven/uni/mt/mt/experiments/outputE/center1.npy*/
 
   /*##Add plotters here if needed */
   plot vtk::Cartesian::vertices::ascii VtkWriter
       variables const = sigma:3,velocity:2
       time            = 0.0
       repeat          = 0.025
-      output          = output/wel/wcoarse
+      output          = output/coarse
   end plot
 
   plot probe::ascii ProbeWriter
       variables const = 8
       time            = 0.0
       repeat          = 0.02
-      output          = probes/wcoarse5
-      select          = x:5.0,y:0.0
+      output          = probes/coarse3
+      select          = x:3.0,y:5.0
   end plot
 
   plot probe::ascii ProbeWriter
     variables const = 8
     time            = 0.0
     repeat          = 0.02
-    output          = probes/wcoarse8
-    select          = x:8.0,y:0.0
+    output          = probes/coarse11
+    select          = x:11.0,y:2.0
   end plot
 
   plot probe::ascii ProbeWriter
         variables const = 8
         time            = 0.0
         repeat          = 0.02
-        output          = probes/wcoarse10
-        select          = x:10.0,y:0.0
+        output          = probes/coarse9
+        select          = x:9.0,y:9.0
     end plot
   end solver
 

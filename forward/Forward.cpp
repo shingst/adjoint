@@ -18,8 +18,8 @@
 
 tarch::logging::Log earthadj::Forward::_log("earthadj::Forward");
 //#define SIMPLE
-//#define HEL
-#define ONLYPWAVES
+#define HEL
+//#define ONLYPWAVES
 
 
 void
@@ -34,19 +34,14 @@ earthadj::Forward::init(const std::vector<std::string> &cmdlineargs, const exahy
 	std::cout<<"ONLYPWAVES\n";
 #endif
 	// Tip: You find documentation for this method in header file "earthadj::Forward.h".
-
-	// @todo read when to refine
 	auto& parser=constants.getParser();
-	//getPreviousMinTimeStamp(); //TODO might be interesting for refinement
 
 	std::string path=parser.getStringFromPath("/solvers/0/adg","", true);
 	endtime=parser.getDoubleFromPath("/computational_domain/end_time",-1.0,false);
-//	std::cout <<path.insert(path.length(),"2")<<"\n";
 	refine = path.length()>0;
 	initPointSourceLocations(cmdlineargs, constants);
 	if (refine)
 		mrparser.parse(path.data(), _domainOffset, _domainSize, 0);
-//	mrparser.parse("/home/sven/uni/mt/mt/experiments/outputE/no-refinement.npy", _domainOffset, _domainSize);
 }
 
 void earthadj::Forward::adjustPointSolution(const double *const x, const double t, const double dt, double *const Q) {
@@ -65,8 +60,6 @@ void earthadj::Forward::adjustPointSolution(const double *const x, const double 
 		Q[uu] = 0.0;
 		Q[vv] = 0.0;
 
-//		WP1(Q,xx,yy);
-//		second_example(Q,xx,yy);
 #ifdef HEL
 		vsp_helsinki(Q,xx,yy);
 #endif
@@ -77,29 +70,6 @@ void earthadj::Forward::adjustPointSolution(const double *const x, const double 
 		onlypvwaves(Q,xx,yy);
 #endif
 
-		// first example
-//		if (xx < 7.5) {
-//			Q[lamb] = 2.0;
-//			Q[mu] = 0.5;
-//		} else {
-//			Q[lamb] = 2.0;
-//			Q[mu] = 2.0;
-//		}
-//		Q[rho] = 1.0;
-
-
-		//LOH non scaled:
-//	  if(yy<-1000) {
-//		  Q[rho]=2700;
-//		  Q[mu]=30.67e9;
-//		  Q[lamb]=144e9;
-//
-//
-//	  } else{
-//		  Q[rho]=2600;
-//		  Q[mu]=10.4e9;
-//		  Q[lamb]=36.4e9;
-//	  }
 
 	}
 }
@@ -111,7 +81,6 @@ void earthadj::Forward::boundaryValues(const double *const x, const double t, co
 	// Tip: See header file "earthadj::AbstractForward.h" for toolkit generated compile-time
 	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
-	// Specified traction
 #ifdef SIMPLE
 	zeroBoundary(direction, stateIn, stateOut);
 #else
@@ -141,9 +110,6 @@ earthadj::Forward::refinementCriterion(const double *const luh, const tarch::la:
 	//    // use Q[0], Q[1], ... Q[sizeOfQ-1]
 	//  }
 
-	// @todo Please implement/augment if required
-//  if(cellCentre[0]<12000&&cellCentre[0]> -2000&&cellCentre[1]>-3000)
-//  	return exahype::solvers::Solver::RefinementControl::Refine;
 	if (refine ) {
 		if (mrparser.amr_steps == 0){
 			if (t == 0) {
@@ -154,19 +120,19 @@ earthadj::Forward::refinementCriterion(const double *const luh, const tarch::la:
 					return exahype::solvers::Solver::RefinementControl::Keep;
 			}
 		}else{
-			int gridnr=std::min((int)std::floor(t*mrparser.amr_steps/endtime)+7,mrparser.amr_steps-1);
+			int gridnr=std::min((int)std::floor(t*mrparser.amr_steps/endtime),mrparser.amr_steps-1);
 //			if(cellCentre[0]<0.2&&cellCentre[1]<0.2){
 //				printf("time %f,gridnr %d\n",t,gridnr);
 //			}
 			auto lvl = mrparser.get_level(cellCentre, gridnr);
 			if (level - getCoarsestMeshLevel() < lvl) {
-				std::cout<<"refine"<<cellCentre[0]<<"   "<<cellCentre[1]<<"level"<<level<<"\n";
+//				std::cout<<"refine"<<cellCentre[0]<<"   "<<cellCentre[1]<<"level"<<level<<"\n";
 				return exahype::solvers::Solver::RefinementControl::Refine;
 			}
 			else {
 				if (level - getCoarsestMeshLevel() > lvl) {
-					std::cout<<"erase"<<cellCentre[0]<<"   "<<cellCentre[1]<<"level"<<level<<"\n";
-//					return exahype::solvers::Solver::RefinementControl::Erase;
+//					std::cout<<"erase"<<cellCentre[0]<<"   "<<cellCentre[1]<<"level"<<level<<"\n";
+					return exahype::solvers::Solver::RefinementControl::Erase;
 				}
 				else {
 //					std::cout<<"keep"<<cellCentre[0]<<"   "<<cellCentre[1]<<"level"<<level<<"\n";
@@ -193,7 +159,6 @@ void earthadj::Forward::eigenvalues(const double *const Q, const int direction, 
 	// @todo Please implement/augment if required
 	auto cp = std::sqrt((Q[lamb] + 2 * Q[mu]) / Q[rho]);
 	auto cs = std::sqrt(Q[mu] / Q[rho]);
-//	std::cout << mrparser.dataowner[direction]<<"\n";
 
 	lambda[0] = -cp;
 	lambda[1] = cp;
@@ -209,25 +174,18 @@ void earthadj::Forward::nonConservativeProduct(const double *const Q, const doub
 	// Tip: See header file "earthadj::AbstractForward.h" for toolkit generated compile-time
 	//      constants such as Order, NumberOfVariables, and NumberOfParameters.
 
-//  std::cout <<"ncp"<<std::endl;
-	// @todo Please implement/augment if required
 	BgradQ[0][sigma11] = -(Q[lamb] + 2 * Q[mu]) * gradQ[0][uu];;
 	BgradQ[0][sigma22] = -Q[lamb] * gradQ[0][uu];
 	BgradQ[0][sigma12] = -Q[mu] * gradQ[0][vv];
 	BgradQ[0][uu] = -gradQ[0][sigma11] / Q[rho];
 	BgradQ[0][vv] = -gradQ[0][sigma12] / Q[rho];
-//  BgradQ[0][lamb] = 0.0;
-//  BgradQ[0][mu] = 0.0;
-//  BgradQ[0][rho] = 0.0;
+
 
 	BgradQ[1][sigma11] = -Q[lamb] * gradQ[1][vv];
 	BgradQ[1][sigma22] = -(Q[lamb] + 2 * Q[mu]) * gradQ[1][vv];
 	BgradQ[1][sigma12] = -Q[mu] * gradQ[1][uu];
 	BgradQ[1][uu] = -gradQ[1][sigma12] / Q[rho];
 	BgradQ[1][vv] = -gradQ[1][sigma22] / Q[rho];
-//  BgradQ[1][lamb] = 0.0;
-//  BgradQ[1][mu] = 0.0;
-//  BgradQ[1][rho] = 0.0;
 }
 
 void earthadj::Forward::initPointSourceLocations(const std::vector<std::string> &cmdlineargs,

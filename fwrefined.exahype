@@ -50,37 +50,37 @@ exahype-project earthadj
     terms const        = ncp,pointsources:1
     optimisation const = optimised
     language const     = C
-    adg                = /home/sven/exa/adjoint/forward/output/wel/wel8noroot.npy
+    adg                = output/wel/amr11stressF.npy
 
   plot vtk::Cartesian::vertices::ascii VtkWriter
       variables const = sigma:3,velocity:2
       time            = 0.0
       repeat          = 0.15
-      output          = output/wel/wel8noroot
+      output          = output/wel/refined
   end plot
 
   plot probe::ascii ProbeWriter
       variables const = 8
       time            = 0.0
       repeat          = 0.02
-      output          = probes/wel/wel8noroot5
-      select          = x:5.0,y:0.0
+      output          = probes/wel/refined4
+      select          = x:4.0,y:1.0
   end plot
 
   plot probe::ascii ProbeWriter
     variables const = 8
     time            = 0.0
     repeat          = 0.02
-    output          = probes/wel/wel8noroot8
-    select          = x:8.0,y:0.0
+    output          = probes/wel/refined7
+    select          = x:7.0,y:3.0
   end plot
 
   plot probe::ascii ProbeWriter
         variables const = 8
         time            = 0.0
         repeat          = 0.02
-        output          = probes/wel/wel8noroot10
-        select          = x:10.0,y:0.0
+        output          = probes/wel/refined11
+        select          = x:11.0,y:2.0
     end plot
   end solver
 

@@ -16,8 +16,8 @@
 
 
 tarch::logging::Log earthadj::Adjoint::_log("earthadj::Adjoint");
-#define SIMPLE   //TWO Halfspaces scenario
-//#define HEL	//Helsinki scenario
+//#define SIMPLE   //TWO Halfspaces scenario
+#define HEL	//Helsinki scenario
 //#define ONLYPWAVES	//only P-waves scenario
 
 
@@ -50,8 +50,8 @@ void earthadj::Adjoint::adjustPointSolution(const double *const x, const double 
 		auto xx = x[0];
 		auto yy = x[1];
 
-		double probex=9.0; //TODO set x-cordinate of the point of interest
-		double probey=13.0; //TODO set y-cordinate of the point of interest
+		double probex=11.0; //TODO set x-cordinate of the point of interest
+		double probey=2.0; //TODO set y-cordinate of the point of interest
 
 		auto dir = std::exp(-(xx-probex)*(xx-probex)*4-(yy-probey)*(yy-probey)*4)/(4*M_PI);
 		Q[sigma12] = dir; //set for beta adjoint
