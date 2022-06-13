@@ -50,7 +50,7 @@ exahype-project earthadj
     terms const        = ncp,pointsources:1
     optimisation const = optimised
     language const     = C
-    adg                = output/wel/amr11stressF.npy
+    adg                = output/wel/refinement.npy
 
   plot vtk::Cartesian::vertices::ascii VtkWriter
       variables const = sigma:3,velocity:2

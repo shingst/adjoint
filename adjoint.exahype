@@ -56,7 +56,7 @@ exahype-project earthadj
       variables const = sigma:3,velocity:2
       time            = 0.0
       repeat          = 0.025
-      output          = outputA/wel8vec
+      output          = outputA/wel11stress
       end plot 
   end solver
 
